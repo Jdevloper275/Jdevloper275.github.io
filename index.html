@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEW</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Using Google Fonts for professional look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <header>
+            <div class="logo-area">
+                <img src="assets/logo.png" alt="CEW Logo" class="app-logo">
+                <h1>CEW</h1>
+            </div>
+            <button id="themeToggle" class="icon-btn" aria-label="Toggle Dark Mode">
+                <!-- Icons handled via CSS or JS, kept simple here -->
+                <span class="sun-icon">☀</span>
+                <span class="moon-icon">☾</span>
+            </button>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="calc">Calculator</button>
+            <button class="tab-btn" data-tab="gst">GST</button>
+            <button class="tab-btn" data-tab="convert">Units</button>
+        </nav>
+
+        <main>
+            <!-- === CALCULATOR MODULE === -->
+            <section id="calc" class="tab-content active">
+                <div class="display-container">
+                    <div class="history" id="calcHistory"></div>
+                    <input type="text" id="calcDisplay" readonly value="0">
+                </div>
+
+                <div class="keypad">
+                    <button class="key action" onclick="calcAction('C')">C</button>
+                    <button class="key action" onclick="calcAction('back')">⌫</button>
+                    <button class="key action" onclick="calcAction('%')">%</button>
+                    <button class="key operator" onclick="calcAction('/')">÷</button>
+
+                    <button class="key" onclick="calcAction('7')">7</button>
+                    <button class="key" onclick="calcAction('8')">8</button>
+                    <button class="key" onclick="calcAction('9')">9</button>
+                    <button class="key operator" onclick="calcAction('*')">×</button>
+
+                    <button class="key" onclick="calcAction('4')">4</button>
+                    <button class="key" onclick="calcAction('5')">5</button>
+                    <button class="key" onclick="calcAction('6')">6</button>
+                    <button class="key operator" onclick="calcAction('-')">−</button>
+
+                    <button class="key" onclick="calcAction('1')">1</button>
+                    <button class="key" onclick="calcAction('2')">2</button>
+                    <button class="key" onclick="calcAction('3')">3</button>
+                    <button class="key operator" onclick="calcAction('+')">+</button>
+
+                    <button class="key" onclick="calcAction('0')">0</button>
+                    <button class="key" onclick="calcAction('.')">.</button>
+                    <button class="key equals-btn" onclick="calcAction('=')">=</button>
+                </div>
+
+                <!-- Smart Action: Send result to GST -->
+                <div class="smart-actions">
+                    <button class="smart-btn" onclick="smartTransfer('calc_to_gst')">Use in GST Calculation →</button>
+                </div>
+            </section>
+
+            <!-- === GST MODULE === -->
+            <section id="gst" class="tab-content">
+
+                <div class="input-group">
+                    <label>Amount (₹)</label>
+                    <input type="number" id="gstAmount" placeholder="Enter Base Amount">
+                </div>
+
+                <div class="control-row">
+                    <label>GST Rate</label>
+                    <div class="rate-selector">
+                        <button class="rate-btn" data-rate="5" onclick="setGstRate(5)">5%</button>
+                        <button class="rate-btn" data-rate="12" onclick="setGstRate(12)">12%</button>
+                        <button class="rate-btn active" data-rate="18" onclick="setGstRate(18)">18%</button>
+                        <button class="rate-btn" data-rate="28" onclick="setGstRate(28)">28%</button>
+                    </div>
+                </div>
+
+                <div class="actions-row">
+                    <button class="primary-btn" onclick="calculateGST('add')">Add GST (+)</button>
+                    <button class="secondary-btn" onclick="calculateGST('remove')">Remove GST (-)</button>
+                </div>
+
+                <div class="result-card" id="gstResultContainer" style="display:none;">
+                    <div class="result-row">
+                        <span>Net Amount:</span>
+                        <span id="resNet">₹0</span>
+                    </div>
+                    <div class="result-row detail">
+                        <span>CGST (<span id="cgstRate">9</span>%):</span>
+                        <span id="resCGST">₹0</span>
+                    </div>
+                    <div class="result-row detail">
+                        <span>SGST (<span id="sgstRate">9</span>%):</span>
+                        <span id="resSGST">₹0</span>
+                    </div>
+                    <div class="result-row total">
+                        <span>Total Amount:</span>
+                        <span id="resTotal">₹0</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- === CONVERSION MODULE === -->
+            <section id="convert" class="tab-content">
+                <div class="control-row">
+                    <label>Category</label>
+                    <select id="convCategory" onchange="updateUnitOptions()">
+                        <option value="length">Length</option>
+                        <option value="area">Area</option>
+                        <option value="volume">Volume</option>
+                        <option value="weight">Weight</option>
+                    </select>
+                </div>
+
+                <div class="converter-grid">
+                    <div class="conv-box">
+                        <label>From</label>
+                        <input type="number" id="convInput" oninput="performConversion()">
+                        <select id="convFrom" onchange="performConversion()"></select>
+                    </div>
+                    <div class="conv-icon">⇄</div>
+                    <div class="conv-box">
+                        <label>To</label>
+                        <input type="number" id="convidx" readonly class="readonly-input">
+                        <select id="convTo" onchange="performConversion()"></select>
+                    </div>
+                </div>
+
+                <div class="smart-actions">
+                    <button class="smart-btn" onclick="smartTransfer('conv_to_gst')">Calc GST on Result →</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
