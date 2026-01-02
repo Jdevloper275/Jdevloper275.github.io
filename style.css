@@ -407,3 +407,98 @@ label {
 [data-theme="light"] .smart-btn {
     background: rgba(37, 99, 235, 0.1);
 }
+
+/* --- History Cards Revamp (Cleaned) --- */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 20px;
+    margin-top: 15px;
+}
+
+.history-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    /* Strict Side-by-Side Layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.history-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.h-expr {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    white-space: nowrap;
+    /* Prevent wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.h-result {
+    font-family: var(--font-mono);
+    font-size: 1.4rem;
+    /* Larger, cleaner number */
+    color: var(--accent);
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* History Sub-tabs (Separated) */
+.history-subtabs {
+    display: flex;
+    background: transparent;
+    padding: 0;
+    border: none;
+    margin-bottom: 20px;
+    gap: 20px;
+    /* Larger gap */
+    justify-content: center;
+    /* Center the tabs */
+}
+
+.h-subtab {
+    flex: 0 1 auto;
+    /* Don't stretch */
+    min-width: 100px;
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    border-radius: 20px;
+    /* Pill shape */
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.h-subtab:hover {
+    background: var(--surface-hover);
+    transform: translateY(-1px);
+}
+
+.h-subtab.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}

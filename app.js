@@ -7,7 +7,8 @@ const appState = {
     calcHistory: '',
     gstRate: 18,
     lastCalcResult: 0,
-    lastConvResult: 0
+    lastConvResult: 0,
+    history: []
 };
 
 // --- INITIALIZATION ---
@@ -69,6 +70,14 @@ function calcAction(val) {
             document.getElementById('calcHistory').innerText = current + ' =';
             display.value = Number(result.toPrecision(12)); // Clean up floating point errors
             appState.lastCalcResult = parseFloat(display.value);
+
+            // Add to History
+            addToHistory({
+                type: 'CALC',
+                expression: current,
+                result: display.value,
+                timestamp: new Date()
+            });
         } catch (e) {
             display.value = 'Error';
         }
@@ -134,7 +143,16 @@ function calculateGST(mode) {
     document.getElementById('resCGST').textContent = formatCurrency(cgst);
     document.getElementById('sgstRate').textContent = rate / 2;
     document.getElementById('resSGST').textContent = formatCurrency(sgst);
+    document.getElementById('resSGST').textContent = formatCurrency(sgst);
     document.getElementById('resTotal').textContent = formatCurrency(total);
+
+    // Add to GST History
+    addToHistory({
+        type: 'GST',
+        expression: `${formatCurrency(amount)} (${rate}%)`,
+        result: formatCurrency(total),
+        timestamp: new Date()
+    });
 }
 
 function formatCurrency(num) {
@@ -257,4 +275,82 @@ function smartTransfer(type) {
         document.querySelector('[data-tab="gst"]').click();
         document.getElementById('gstAmount').value = val;
     }
+}
+
+// --- HISTORY MODULE ---
+function switchSubTab(type) {
+    const genBtn = document.querySelectorAll('.h-subtab')[0];
+    const gstBtn = document.querySelectorAll('.h-subtab')[1];
+
+    // Safety check if elements exist
+    if (!genBtn || !gstBtn) return;
+
+    const genCont = document.getElementById('histContainerGeneral');
+    const gstCont = document.getElementById('histContainerGST');
+
+    if (type === 'general') {
+        genBtn.classList.add('active');
+        gstBtn.classList.remove('active');
+        genCont.style.display = 'block';
+        gstCont.style.display = 'none';
+    } else {
+        genBtn.classList.remove('active');
+        gstBtn.classList.add('active');
+        genCont.style.display = 'none';
+        gstCont.style.display = 'block';
+    }
+}
+
+function addToHistory(entry) {
+    appState.history.unshift(entry); // Add to top
+    if (appState.history.length > 50) appState.history.pop(); // Limit to 50
+    renderHistory();
+}
+
+function renderHistory() {
+    const calcList = document.getElementById('calcHistoryList');
+    const gstList = document.getElementById('gstHistoryList');
+
+    // Safety check
+    if (!calcList || !gstList) return;
+
+    // Reset both
+    calcList.innerHTML = '';
+    gstList.innerHTML = '';
+
+    const historyItems = appState.history;
+
+    let calcCount = 0;
+    let gstCount = 0;
+
+    historyItems.forEach(item => {
+        if (typeof item === 'string') return;
+
+        const div = document.createElement('div');
+        div.className = 'history-card';
+
+        // New Side-by-side layout: Expression (Left) - Result (Right)
+        div.innerHTML = `
+            <div class="h-expr">${item.expression} =</div>
+            <div class="h-result">${item.result}</div>
+        `;
+
+        // Check if item should go to GST or General list
+        if (item.type === 'GST') {
+            gstList.appendChild(div);
+            gstCount++;
+        } else {
+            // Default to Calc for 'CALC' or any legacy items
+            calcList.appendChild(div);
+            calcCount++;
+        }
+    });
+
+    if (calcCount === 0) calcList.innerHTML = '<div class="empty-state">No calculations yet</div>';
+    if (gstCount === 0) gstList.innerHTML = '<div class="empty-state">No GST history yet</div>';
+}
+
+function clearCalculatorHistory() {
+    appState.history = [];
+    renderHistory();
 }

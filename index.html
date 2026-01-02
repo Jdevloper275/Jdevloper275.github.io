@@ -4,8 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CEW</title>
+    <title>GST Calculator</title>
     <link rel="stylesheet" href="style.css">
+
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e1e24">
+    <link rel="apple-touch-icon" href="icon.png">
+
     <!-- Using Google Fonts for professional look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +26,6 @@
 
         <header>
             <div class="logo-area">
-                <img src="assets/logo.png" alt="CEW Logo" class="app-logo">
                 <h1>CEW</h1>
             </div>
             <button id="themeToggle" class="icon-btn" aria-label="Toggle Dark Mode">
@@ -34,6 +39,7 @@
             <button class="tab-btn active" data-tab="calc">Calculator</button>
             <button class="tab-btn" data-tab="gst">GST</button>
             <button class="tab-btn" data-tab="convert">Units</button>
+            <button class="tab-btn" data-tab="history">History</button>
         </nav>
 
         <main>
@@ -150,10 +156,46 @@
                 </div>
             </section>
 
+            <!-- === HISTORY MODULE === -->
+            <section id="history" class="tab-content">
+                <div class="control-row" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                    <button class="secondary-btn" style="width: auto; padding: 6px 24px; font-size: 0.85rem;"
+                        onclick="clearCalculatorHistory()">Clear</button>
+                </div>
+
+                <div class="history-subtabs">
+                    <button class="h-subtab active" onclick="switchSubTab('general')">General</button>
+                    <button class="h-subtab" onclick="switchSubTab('gst')">GST</button>
+                </div>
+
+                <div id="histContainerGeneral" class="history-container active">
+                    <div class="history-list" id="calcHistoryList">
+                        <div class="empty-state">No calculations yet</div>
+                    </div>
+                </div>
+
+                <div id="histContainerGST" class="history-container" style="display:none;">
+                    <div class="history-list" id="gstHistoryList">
+                        <div class="empty-state">No GST history yet</div>
+                    </div>
+                </div>
+            </section>
+
         </main>
     </div>
 
     <script src="app.js"></script>
+
+    <!-- PWA Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker failed', err));
+            });
+        }
+    </script>
 </body>
 
 </html>
