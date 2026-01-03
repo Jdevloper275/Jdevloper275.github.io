@@ -1,37 +1,54 @@
 :root {
-    /* Dark Theme Default */
-    --bg-app: #1e1e24;
-    --bg-body: #121212;
-    --text-main: #e0e0e0;
-    --text-secondary: #909090;
-    --accent: #d32f2f;
-    /* Red from Image */
-    --accent-hover: #b71c1c;
-    /* Darker Red */
-    --surface: #2b2b36;
-    --surface-hover: #353542;
-    --border: #3d3d4d;
-    --success: #06d6a0;
-    --danger: #ef476f;
+    /* Premium Dark Theme */
+    --bg-app: #18181b;
+    /* Zinc-900 */
+    --bg-body: #09090b;
+    /* Zinc-950 */
+    --text-main: #f4f4f5;
+    /* Zinc-100 */
+    --text-secondary: #a1a1aa;
+    /* Zinc-400 */
+
+    /* Vibrant Red-Orange Mix (Deep Orange) */
+    --accent: #FF5722;
+    /* Eye-catching Red-Orange */
+    --accent-hover: #E64A19;
+    /* Darker Deep Orange */
+
+    --surface: #27272a;
+    /* Zinc-800 */
+    --surface-hover: #3f3f46;
+    /* Zinc-700 */
+    --border: #3f3f46;
+
+    --success: #10b981;
+    /* Emerald */
+    --danger: #ef4444;
+    /* Red-500 */
 
     --font-main: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
 
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    --radius: 12px;
+    --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    /* Deep elegant shadow */
+    --radius: 16px;
+    /* Slightly rounder */
 }
 
 [data-theme="light"] {
     --bg-app: #ffffff;
     --bg-body: #f0f2f5;
-    --text-main: #333333;
-    --text-secondary: #666666;
-    --accent: #d32f2f;
+    --text-main: #18181b;
+    /* Jet Black for sharp contrast */
+    --text-secondary: #52525b;
+    /* Zinc-600 (Darker, crisper grey) */
+    --accent: #FF5722;
     /* Red */
-    --accent-hover: #b71c1c;
+    --accent-hover: #E64A19;
     --surface: #f8f9fa;
     --surface-hover: #e9ecef;
-    --border: #dee2e6;
+    --border: #e4e4e7;
+    /* Zinc-200 */
     --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     /* Lighter shadow */
 }
@@ -41,6 +58,8 @@
     margin: 0;
     padding: 0;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    /* Disables double-tap to zoom */
 }
 
 body {
@@ -101,12 +120,19 @@ header {
 }
 
 .brand-name {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     font-weight: 800;
-    color: var(--accent);
-    /* Red */
+    line-height: 1;
+    letter-spacing: 1px;
     margin: 0;
-    letter-spacing: 0.5px;
+
+    /* Match Logo: Gradient Text */
+    background: linear-gradient(135deg, #FF5722, #D32F2F);
+    background-clip: text;
+    /* Standard property */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 10px rgba(211, 47, 47, 0.2);
 }
 
 .brand-sub {
@@ -610,6 +636,15 @@ label {
 .h-subtab:active {
     transform: scale(0.95);
     filter: brightness(0.9);
+}
+
+.h-subtab.btn-yellow {
+    /* Mixing Orange and Red as requested */
+    background: linear-gradient(135deg, #FF9800, #F44336);
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+    /* Orange-Red Glow */
 }
 
 .h-subtab.active {
