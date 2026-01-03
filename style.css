@@ -1,24 +1,38 @@
 :root {
-    /* Dark Theme Default */
-    --bg-app: #1e1e24;
-    --bg-body: #121212;
-    --text-main: #e0e0e0;
-    --text-secondary: #909090;
-    --accent: #d32f2f;
-    /* Red from Image */
-    --accent-hover: #b71c1c;
-    /* Darker Red */
-    --surface: #2b2b36;
-    --surface-hover: #353542;
-    --border: #3d3d4d;
-    --success: #06d6a0;
-    --danger: #ef476f;
+    /* Premium Dark Theme */
+    --bg-app: #18181b;
+    /* Zinc-900 */
+    --bg-body: #09090b;
+    /* Zinc-950 */
+    --text-main: #f4f4f5;
+    /* Zinc-100 */
+    --text-secondary: #a1a1aa;
+    /* Zinc-400 */
+
+    /* Vibrant Red-Orange Mix (Deep Orange) */
+    --accent: #FF5722;
+    /* Eye-catching Red-Orange */
+    --accent-hover: #E64A19;
+    /* Darker Deep Orange */
+
+    --surface: #27272a;
+    /* Zinc-800 */
+    --surface-hover: #3f3f46;
+    /* Zinc-700 */
+    --border: #3f3f46;
+
+    --success: #10b981;
+    /* Emerald */
+    --danger: #ef4444;
+    /* Red-500 */
 
     --font-main: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
 
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    --radius: 12px;
+    --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    /* Deep elegant shadow */
+    --radius: 16px;
+    /* Slightly rounder */
 }
 
 [data-theme="light"] {
@@ -610,6 +624,15 @@ label {
 .h-subtab:active {
     transform: scale(0.95);
     filter: brightness(0.9);
+}
+
+.h-subtab.btn-yellow {
+    /* Mixing Orange and Red as requested */
+    background: linear-gradient(135deg, #FF9800, #F44336);
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+    /* Orange-Red Glow */
 }
 
 .h-subtab.active {
