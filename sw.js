@@ -1,11 +1,11 @@
-const CACHE_NAME = 'gst-calc-v9';
+const CACHE_NAME = 'gst-calc-v11';
 const ASSETS = [
     './',
     './index.html',
     './style.css',
     './app.js',
     './manifest.json',
-    './logo-icon.png'
+    './icon.png'
 ];
 
 // Install Event - Cache Files
