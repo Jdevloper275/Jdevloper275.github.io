@@ -1,0 +1,8 @@
+name = "chandan-calculator"
+compatibility_date = "2025-01-03"
+
+[assets]
+directory = "."
+
+[observability]
+enabled = true
