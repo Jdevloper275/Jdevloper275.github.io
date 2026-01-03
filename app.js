@@ -107,24 +107,34 @@ function calcAction(val) {
 let lastBackPressTime = 0;
 
 function initBackHandler() {
-    // Push a dummy state to trap the first back action
-    history.pushState(null, null, location.href);
+    // Push state with a hash to ensure it's distinct
+    if (!location.hash) {
+        history.pushState({ page: 1 }, "title", "#guard");
+    }
 
-    window.addEventListener('popstate', () => {
+    window.onpopstate = function (event) {
         const currentTime = new Date().getTime();
         const timeDiff = currentTime - lastBackPressTime;
 
+        if (location.hash === "#guard") {
+            // We are back at the guard state (user might have navigated forward? Unlikely in this app)
+            return;
+        }
+
+        // We popped the state (hash is gone).
         if (timeDiff < 2000) {
-            return; // Exit allowed
+            // Second press within 2s -> Allow Exit (do nothing, let the pop happen)
+            // But wait, if we popped, we are now at 'no hash'. If that was the start, we exit.
+            return;
         } else {
-            // First press -> Show Toast & Reset Trap
+            // First press -> Show Toast & Restore Guard
             lastBackPressTime = currentTime;
             showToast("Press back again to exit");
 
-            // Re-push the trap state so we stay 'in' the app
-            history.pushState(null, null, location.href);
+            // Restore the guard state immediately
+            history.pushState({ page: 1 }, "title", "#guard");
         }
-    });
+    };
 }
 
 function showToast(message) {
