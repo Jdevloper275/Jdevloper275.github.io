@@ -309,8 +309,8 @@ label {
 /* Revised Calculator Layout */
 .gst-btn-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
     margin-bottom: 2px;
     background: transparent;
     /* Removed hardcoded separator background */
@@ -389,12 +389,24 @@ label {
     background: var(--surface-hover);
 }
 
+.btn-light {
+    background: var(--surface-hover);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+}
+
+.btn-light:active {
+    background: var(--border);
+    /* Even lighter on press */
+}
+
 .btn-yellow {
-    background: var(--accent);
-    /* Use Global Orange */
+    /* Lighter/Brighter Orange Gradient */
+    background: linear-gradient(135deg, #FFC107, #FF9800);
     color: #fff;
     /* White text on Orange */
     font-weight: 600;
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
 }
 
 .btn-yellow:active {
