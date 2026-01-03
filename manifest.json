@@ -1,6 +1,6 @@
 {
-    "name": "GST Calculator",
-    "short_name": "GST Calc",
+    "name": "Chandan Calculator",
+    "short_name": "Chandan",
     "id": "./",
     "start_url": "./index.html",
     "display": "standalone",
