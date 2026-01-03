@@ -389,6 +389,17 @@ label {
     background: var(--surface-hover);
 }
 
+.btn-light {
+    background: var(--surface-hover);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+}
+
+.btn-light:active {
+    background: var(--border);
+    /* Even lighter on press */
+}
+
 .btn-yellow {
     background: var(--accent);
     /* Use Global Orange */
