@@ -309,8 +309,8 @@ label {
 /* Revised Calculator Layout */
 .gst-btn-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
     margin-bottom: 2px;
     background: transparent;
     /* Removed hardcoded separator background */
