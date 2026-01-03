@@ -1,0 +1,6 @@
+{
+    "appId": "com.cew.calculator",
+    "appName": "CEW Calculator",
+    "webDir": "dist",
+    "bundledWebRuntime": false
+}

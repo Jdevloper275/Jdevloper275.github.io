@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chandan Calculator</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e1e24">
+    <link rel="apple-touch-icon" href="logo-icon.png">
+    <link rel="icon" type="image/png" href="logo-icon.png">
+
+    <!-- Using Google Fonts for professional look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <header>
+            <div class="logo-area">
+                <img src="logo-icon.png" alt="Logo" class="app-logo">
+                <div class="brand-text">
+                    <h1 class="brand-name">CHANDAN</h1>
+                    <span class="brand-sub">ENGINEERING WORKS</span>
+                </div>
+            </div>
+            <button id="themeToggle" class="icon-btn" aria-label="Toggle Dark Mode">
+                <!-- Icons handled via CSS or JS, kept simple here -->
+                <span class="sun-icon">☀</span>
+                <span class="moon-icon">☾</span>
+            </button>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="calc">Calculator</button>
+            <button class="tab-btn" data-tab="convert">Units</button>
+            <button class="tab-btn" data-tab="history">History</button>
+        </nav>
+
+        <main>
+            <!-- === CALCULATOR MODULE === -->
+            <section id="calc" class="tab-content active">
+                <div class="display-container">
+                    <div class="history" id="calcHistory"></div>
+                    <input type="text" id="calcDisplay" readonly value="0">
+                    <div id="gstDetails" class="gst-details"></div>
+                </div>
+
+                <!-- Integrated GST Control Strip -->
+                <div class="gst-btn-grid">
+                    <!-- Positive Rates -->
+                    <button class="gst-key" onclick="handleGstButton(3, 'add')">+3%</button>
+                    <button class="gst-key" onclick="handleGstButton(5, 'add')">+5%</button>
+                    <button class="gst-key" onclick="handleGstButton(10, 'add')">+10%</button>
+                    <button class="gst-key" onclick="handleGstButton(12, 'add')">+12%</button>
+                    <button class="gst-key" onclick="handleGstButton(18, 'add')">+18%</button>
+
+                    <!-- Negative Rates -->
+                    <button class="gst-key" onclick="handleGstButton(3, 'sub')">-3%</button>
+                    <button class="gst-key" onclick="handleGstButton(5, 'sub')">-5%</button>
+                    <button class="gst-key" onclick="handleGstButton(10, 'sub')">-10%</button>
+                    <button class="gst-key" onclick="handleGstButton(12, 'sub')">-12%</button>
+                    <button class="gst-key" onclick="handleGstButton(18, 'sub')">-18%</button>
+                </div>
+
+                <!-- Main Calculator Grid (5 Columns) -->
+                <div class="calc-main-grid">
+                    <!-- Row 1 -->
+                    <button class="key btn-dark-grey" onclick="calcAction('7')">7</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('8')">8</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('9')">9</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('/')">÷</button>
+                    <button class="key btn-yellow" onclick="calcAction('back')">⌫</button>
+
+                    <!-- Row 2 -->
+                    <button class="key btn-dark-grey" onclick="calcAction('4')">4</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('5')">5</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('6')">6</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('*')">×</button>
+                    <button class="key btn-yellow" onclick="calcAction('C')">AC</button>
+
+                    <!-- Row 3 -->
+                    <button class="key btn-dark-grey" onclick="calcAction('1')">1</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('2')">2</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('3')">3</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('-')">−</button>
+                    <button class="key btn-yellow" onclick="calcAction('%')">%</button>
+
+                    <!-- Row 4 -->
+                    <button class="key btn-dark-grey" onclick="calcAction('0')">0</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('00')">00</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('.')">.</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('+')">+</button>
+                    <button class="key btn-yellow" onclick="calcAction('=')">=</button>
+                </div>
+            </section>
+
+            <!-- === CONVERSION MODULE === -->
+            <section id="convert" class="tab-content">
+                <div class="control-row">
+                    <label>Category</label>
+                    <select id="convCategory" onchange="updateUnitOptions()">
+                        <option value="length">Length</option>
+                        <option value="area">Area</option>
+                        <option value="volume">Volume</option>
+                        <option value="weight">Weight</option>
+                    </select>
+                </div>
+
+                <div class="converter-grid">
+                    <div class="conv-box">
+                        <label>From</label>
+                        <select id="convFrom" onchange="performConversion()"></select>
+                        <input type="number" id="convInput" oninput="performConversion()">
+                    </div>
+                    <div class="conv-icon">⇄</div>
+                    <div class="conv-box">
+                        <label>To</label>
+                        <select id="convTo" onchange="performConversion()"></select>
+                        <input type="number" id="convidx" readonly class="readonly-input">
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- === HISTORY MODULE === -->
+            <section id="history" class="tab-content">
+                <div class="control-row" style="display: flex; justify-content: center; margin-bottom: 20px;">
+                    <button class="secondary-btn" style="width: auto; padding: 6px 24px; font-size: 0.85rem;"
+                        onclick="clearCalculatorHistory()">Clear</button>
+                </div>
+
+                <div class="history-subtabs">
+                    <button class="h-subtab active" onclick="switchSubTab('general')">General</button>
+                    <button class="h-subtab" onclick="switchSubTab('gst')">GST</button>
+                </div>
+
+                <div id="histContainerGeneral" class="history-container active">
+                    <div class="history-list" id="calcHistoryList">
+                        <div class="empty-state">No calculations yet</div>
+                    </div>
+                </div>
+
+                <div id="histContainerGST" class="history-container" style="display:none;">
+                    <div class="history-list" id="gstHistoryList">
+                        <div class="empty-state">No GST history yet</div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+
+    <!-- PWA Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker failed', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

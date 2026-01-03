@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CEW Calculator</string>
+    <string name="title_activity_main">CEW Calculator</string>
+    <string name="package_name">com.cew.calculator</string>
+    <string name="custom_url_scheme">com.cew.calculator</string>
+</resources>
