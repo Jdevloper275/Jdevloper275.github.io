@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GST Calculator</title>
+    <title>CHANDAN CALCULATOR</title>
     <link rel="stylesheet" href="style.css">
 
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e1e24">
-    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-icon" href="logo-icon.png">
+    <link rel="icon" type="image/png" href="logo-icon.png">
 
     <!-- Using Google Fonts for professional look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +27,11 @@
 
         <header>
             <div class="logo-area">
-                <h1>CEW</h1>
+                <img src="logo-icon.png" alt="Logo" class="app-logo">
+                <div class="brand-text">
+                    <h1 class="brand-name">CHANDAN</h1>
+                    <span class="brand-sub">ENGINEERING WORKS</span>
+                </div>
             </div>
             <button id="themeToggle" class="icon-btn" aria-label="Toggle Dark Mode">
                 <!-- Icons handled via CSS or JS, kept simple here -->
@@ -37,7 +42,6 @@
 
         <nav class="tabs">
             <button class="tab-btn active" data-tab="calc">Calculator</button>
-            <button class="tab-btn" data-tab="gst">GST</button>
             <button class="tab-btn" data-tab="convert">Units</button>
             <button class="tab-btn" data-tab="history">History</button>
         </nav>
@@ -48,80 +52,55 @@
                 <div class="display-container">
                     <div class="history" id="calcHistory"></div>
                     <input type="text" id="calcDisplay" readonly value="0">
+                    <div id="gstDetails" class="gst-details"></div>
                 </div>
 
-                <div class="keypad">
-                    <button class="key action" onclick="calcAction('C')">C</button>
-                    <button class="key action" onclick="calcAction('back')">⌫</button>
-                    <button class="key action" onclick="calcAction('%')">%</button>
-                    <button class="key operator" onclick="calcAction('/')">÷</button>
+                <!-- Integrated GST Control Strip -->
+                <div class="gst-btn-grid">
+                    <!-- Positive Rates -->
+                    <button class="gst-key" onclick="handleGstButton(3, 'add')">+3%</button>
+                    <button class="gst-key" onclick="handleGstButton(5, 'add')">+5%</button>
+                    <button class="gst-key" onclick="handleGstButton(10, 'add')">+10%</button>
+                    <button class="gst-key" onclick="handleGstButton(12, 'add')">+12%</button>
+                    <button class="gst-key" onclick="handleGstButton(18, 'add')">+18%</button>
 
-                    <button class="key" onclick="calcAction('7')">7</button>
-                    <button class="key" onclick="calcAction('8')">8</button>
-                    <button class="key" onclick="calcAction('9')">9</button>
-                    <button class="key operator" onclick="calcAction('*')">×</button>
-
-                    <button class="key" onclick="calcAction('4')">4</button>
-                    <button class="key" onclick="calcAction('5')">5</button>
-                    <button class="key" onclick="calcAction('6')">6</button>
-                    <button class="key operator" onclick="calcAction('-')">−</button>
-
-                    <button class="key" onclick="calcAction('1')">1</button>
-                    <button class="key" onclick="calcAction('2')">2</button>
-                    <button class="key" onclick="calcAction('3')">3</button>
-                    <button class="key operator" onclick="calcAction('+')">+</button>
-
-                    <button class="key" onclick="calcAction('0')">0</button>
-                    <button class="key" onclick="calcAction('.')">.</button>
-                    <button class="key equals-btn" onclick="calcAction('=')">=</button>
+                    <!-- Negative Rates -->
+                    <button class="gst-key" onclick="handleGstButton(3, 'sub')">-3%</button>
+                    <button class="gst-key" onclick="handleGstButton(5, 'sub')">-5%</button>
+                    <button class="gst-key" onclick="handleGstButton(10, 'sub')">-10%</button>
+                    <button class="gst-key" onclick="handleGstButton(12, 'sub')">-12%</button>
+                    <button class="gst-key" onclick="handleGstButton(18, 'sub')">-18%</button>
                 </div>
 
-                <!-- Smart Action: Send result to GST -->
-                <div class="smart-actions">
-                    <button class="smart-btn" onclick="smartTransfer('calc_to_gst')">Use in GST Calculation →</button>
-                </div>
-            </section>
+                <!-- Main Calculator Grid (5 Columns) -->
+                <div class="calc-main-grid">
+                    <!-- Row 1 -->
+                    <button class="key btn-dark-grey" onclick="calcAction('7')">7</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('8')">8</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('9')">9</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('/')">÷</button>
+                    <button class="key btn-yellow" onclick="calcAction('back')">⌫</button>
 
-            <!-- === GST MODULE === -->
-            <section id="gst" class="tab-content">
+                    <!-- Row 2 -->
+                    <button class="key btn-dark-grey" onclick="calcAction('4')">4</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('5')">5</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('6')">6</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('*')">×</button>
+                    <button class="key btn-yellow" onclick="calcAction('C')">AC</button>
 
-                <div class="input-group">
-                    <label>Amount (₹)</label>
-                    <input type="number" id="gstAmount" placeholder="Enter Base Amount">
-                </div>
+                    <!-- Row 3 -->
+                    <button class="key btn-dark-grey" onclick="calcAction('1')">1</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('2')">2</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('3')">3</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('-')">−</button>
+                    <button class="key btn-yellow" onclick="calcAction('%')">%</button>
 
-                <div class="control-row">
-                    <label>GST Rate</label>
-                    <div class="rate-selector">
-                        <button class="rate-btn" data-rate="5" onclick="setGstRate(5)">5%</button>
-                        <button class="rate-btn" data-rate="12" onclick="setGstRate(12)">12%</button>
-                        <button class="rate-btn active" data-rate="18" onclick="setGstRate(18)">18%</button>
-                        <button class="rate-btn" data-rate="28" onclick="setGstRate(28)">28%</button>
-                    </div>
-                </div>
-
-                <div class="actions-row">
-                    <button class="primary-btn" onclick="calculateGST('add')">Add GST (+)</button>
-                    <button class="secondary-btn" onclick="calculateGST('remove')">Remove GST (-)</button>
-                </div>
-
-                <div class="result-card" id="gstResultContainer" style="display:none;">
-                    <div class="result-row">
-                        <span>Net Amount:</span>
-                        <span id="resNet">₹0</span>
-                    </div>
-                    <div class="result-row detail">
-                        <span>CGST (<span id="cgstRate">9</span>%):</span>
-                        <span id="resCGST">₹0</span>
-                    </div>
-                    <div class="result-row detail">
-                        <span>SGST (<span id="sgstRate">9</span>%):</span>
-                        <span id="resSGST">₹0</span>
-                    </div>
-                    <div class="result-row total">
-                        <span>Total Amount:</span>
-                        <span id="resTotal">₹0</span>
-                    </div>
+                    <!-- Row 4 -->
+                    <button class="key btn-dark-grey" onclick="calcAction('0')">0</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('00')">00</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('.')">.</button>
+                    <button class="key btn-dark-grey" onclick="calcAction('+')">+</button>
+                    <button class="key btn-yellow" onclick="calcAction('=')">=</button>
                 </div>
             </section>
 
@@ -140,20 +119,17 @@
                 <div class="converter-grid">
                     <div class="conv-box">
                         <label>From</label>
-                        <input type="number" id="convInput" oninput="performConversion()">
                         <select id="convFrom" onchange="performConversion()"></select>
+                        <input type="number" id="convInput" oninput="performConversion()">
                     </div>
                     <div class="conv-icon">⇄</div>
                     <div class="conv-box">
                         <label>To</label>
-                        <input type="number" id="convidx" readonly class="readonly-input">
                         <select id="convTo" onchange="performConversion()"></select>
+                        <input type="number" id="convidx" readonly class="readonly-input">
                     </div>
                 </div>
 
-                <div class="smart-actions">
-                    <button class="smart-btn" onclick="smartTransfer('conv_to_gst')">Calc GST on Result →</button>
-                </div>
             </section>
 
             <!-- === HISTORY MODULE === -->

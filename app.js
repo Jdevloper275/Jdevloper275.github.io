@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     setupTabs();
     updateUnitOptions(); // Initialize conversion options
+    loadHistory(); // Load saved history
+    loadHistory(); // Load saved history
+    initBackHandler(); // Double back to exit
+    preventAccidentalRefresh();
 });
 
 // --- THEME HANDLING ---
@@ -57,6 +61,7 @@ function calcAction(val) {
     if (val === 'C') {
         display.value = '0';
         document.getElementById('calcHistory').innerText = '';
+        document.getElementById('gstDetails').innerText = '';
     } else if (val === 'back') {
         display.value = current.length > 1 ? current.slice(0, -1) : '0';
     } else if (val === '=') {
@@ -87,70 +92,139 @@ function calcAction(val) {
             display.value = result;
         } catch (e) { display.value = 'Error'; }
     } else {
-        // Prevent multiple operators or leading zeros if simpler logic is desired
+        // Prevent multiple operators or leading zeros
         if (current === '0' && !['.', '+', '-', '*', '/'].includes(val)) {
             display.value = val;
         } else {
+            // Handle 00
+            if (val === '00' && current === '0') return; // Don't add 00 to 0
             display.value += val;
         }
     }
 }
 
-// --- GST MODULE ---
-function setGstRate(rate) {
-    appState.gstRate = Number(rate);
+// --- EXIT HANDLER (Double Back) ---
+let lastBackPressTime = 0;
 
-    // UI Update
-    document.querySelectorAll('.rate-btn').forEach(btn => {
-        btn.classList.toggle('active', Number(btn.dataset.rate) === rate);
+function initBackHandler() {
+    // Push a dummy state to trap the first back action
+    history.pushState(null, null, location.href);
+
+    window.addEventListener('popstate', () => {
+        const currentTime = new Date().getTime();
+        const timeDiff = currentTime - lastBackPressTime;
+
+        if (timeDiff < 2000) {
+            return; // Exit allowed
+        } else {
+            // First press -> Show Toast & Reset Trap
+            lastBackPressTime = currentTime;
+            showToast("Press back again to exit");
+
+            // Re-push the trap state so we stay 'in' the app
+            history.pushState(null, null, location.href);
+        }
     });
-
-    // Re-calculate if result is already showing
-    if (document.getElementById('gstResultContainer').style.display !== 'none') {
-        // Detect if we were doing add or remove based on context? 
-        // For simplicity, just reset or re-trigger if possible. 
-        // Ideally we'd store the last operation type. Let's just clear for now to avoid confusion.
-        // Or better: Use the input value and default to 'add' if typed?
-        // Let's leave it as manual trigger for clarity.
-    }
 }
 
-function calculateGST(mode) {
-    const amount = parseFloat(document.getElementById('gstAmount').value);
-    if (isNaN(amount)) return;
+function showToast(message) {
+    // Remove existing
+    const existing = document.querySelector('.toast-msg');
+    if (existing) existing.remove();
 
-    const rate = appState.gstRate;
-    let base, gstAmount, total, cgst, sgst;
+    const toast = document.createElement('div');
+    toast.className = 'toast-msg';
+    toast.textContent = message;
+    document.body.appendChild(toast);
 
-    if (mode === 'add') {
-        base = amount;
-        gstAmount = (amount * rate) / 100;
-        total = base + gstAmount;
-    } else {
-        // Remove GST
-        total = amount;
-        base = (amount * 100) / (100 + rate);
-        gstAmount = total - base;
+    // Trigger Fade In
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+
+    // Remove after 2s
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 2000);
+}
+
+// --- REFRESH PREVENTION ---
+function preventAccidentalRefresh() {
+    window.addEventListener('beforeunload', (e) => {
+        // Cancel the event
+        e.preventDefault();
+        // Chrome requires returnValue to be set
+        e.returnValue = '';
+        return 'Are you sure you want to refresh?';
+    });
+}
+
+// --- RIPPLE EFFECT REMOVED ---
+
+function handleGstButton(rate, mode) {
+    const display = document.getElementById('calcDisplay');
+    let currentVal = parseFloat(display.value);
+
+    // Evaluate if there's an expression pending (e.g. "50+50")
+    if (isNaN(currentVal) || /[+\-*/]/.test(display.value)) {
+        try {
+            currentVal = eval(display.value.replace(/×/g, '*').replace(/÷/g, '/'));
+        } catch (e) {
+            return; // Can't calc GST on invalid expr
+        }
     }
 
-    cgst = gstAmount / 2;
-    sgst = gstAmount / 2;
+    let finalVal = 0;
+    let gstAmt = 0;
 
-    // Display
-    document.getElementById('gstResultContainer').style.display = 'block';
-    document.getElementById('resNet').textContent = formatCurrency(base);
-    document.getElementById('cgstRate').textContent = rate / 2;
-    document.getElementById('resCGST').textContent = formatCurrency(cgst);
-    document.getElementById('sgstRate').textContent = rate / 2;
-    document.getElementById('resSGST').textContent = formatCurrency(sgst);
-    document.getElementById('resSGST').textContent = formatCurrency(sgst);
-    document.getElementById('resTotal').textContent = formatCurrency(total);
+    if (mode === 'add') {
+        gstAmt = (currentVal * rate) / 100;
+        finalVal = currentVal + gstAmt;
+    } else {
+        // Reverse Calculation: Value is inclusive of GST, strip it.
+        // Formula: Base = Total / (1 + rate/100) -> BUT usually calculator buttons "-", "5%" simply mean subtract 5% of value.
+        // User requested: "Remove 28%". In a GST Context, "Remove" usually means "Find Base".
+        // However, generic "Tax-" buttons often just do X - (X*Rate).
+        // Let's implement STANDARD MATH logic: Value - (Value * Rate).
+        // If user wants Reverse GST, they usually use a specific tool. The "Remove 5%" button on a calculator usually means "Minus 5%".
+        // Wait, looking at the image... It has +9% and -9%.
+        // If I have 109. +9% = 109.
+        // If I have 109. -9% (of 109) != 100.
+        // BUT for a "GST Calculator" app, usually -% means "Extract GST".
+        // I will implement "Extract GST" (Reverse) for the negative buttons because this is a GST APP.
+        // Formula: Base = Total * 100 / (100 + Rate)
 
-    // Add to GST History
+        // Actually, typical "Tax-" buttons on merchant calculators operate as:
+        // Tax- on Net -> reduces it? No.
+        // Let's stick to the MOST useful feature for a GST app: Reverse Calc.
+        const base = (currentVal * 100) / (100 + rate);
+        finalVal = base;
+        gstAmt = currentVal - base;
+    }
+
+    const cgst = gstAmt / 2;
+    const sgst = gstAmt / 2;
+
+    // Update Display
+    display.value = parseFloat(finalVal.toFixed(2));
+
+    // Update History string to show what happened
+    document.getElementById('calcHistory').innerText = `${currentVal} ${mode === 'add' ? '+' : '-'} ${rate}% GST`;
+
+    // Update Details
+    const detailsEl = document.getElementById('gstDetails');
+    if (mode === 'add') {
+        detailsEl.innerText = `GST: ${formatCurrency(gstAmt)} (C: ${formatCurrency(cgst)}, S: ${formatCurrency(sgst)})`;
+    } else {
+        detailsEl.innerText = `GST Rem: ${formatCurrency(gstAmt)} (C: ${formatCurrency(cgst)}, S: ${formatCurrency(sgst)})`;
+    }
+
+    // Add to History List
     addToHistory({
-        type: 'GST',
-        expression: `${formatCurrency(amount)} (${rate}%)`,
-        result: formatCurrency(total),
+        type: 'GST_QUICK',
+        expression: `${currentVal} ${mode === 'add' ? '+' : '-'} ${rate}%`,
+        result: display.value,
         timestamp: new Date()
     });
 }
@@ -161,6 +235,7 @@ function formatCurrency(num) {
         currency: 'INR'
     }).format(num);
 }
+
 
 // --- CONVERSION MODULE ---
 const conversionInfo = {
@@ -259,22 +334,9 @@ function performConversion() {
 
 // --- SMART INTEGRATION ---
 function smartTransfer(type) {
-    if (type === 'calc_to_gst') {
-        const val = appState.lastCalcResult;
-        if (!val) return alert('No calculated value to transfer!');
-
-        // Switch Tab
-        document.querySelector('[data-tab="gst"]').click();
-        // Fill Value
-        document.getElementById('gstAmount').value = val;
-
-    } else if (type === 'conv_to_gst') {
-        const val = appState.lastConvResult;
-        if (!val) return alert('No conversion result to transfer!');
-
-        document.querySelector('[data-tab="gst"]').click();
-        document.getElementById('gstAmount').value = val;
-    }
+    // Legacy functions from removed modules (like 'conv_to_gst') can remain or be cleaned.
+    // Since GST Tab is removed, 'calc_to_gst' is obsolete. 'conv_to_gst' could just paste to Calc?
+    // For now, let's just leave empty or remove if uncalled.
 }
 
 // --- HISTORY MODULE ---
@@ -304,6 +366,7 @@ function switchSubTab(type) {
 function addToHistory(entry) {
     appState.history.unshift(entry); // Add to top
     if (appState.history.length > 50) appState.history.pop(); // Limit to 50
+    saveHistory(); // Save persistence
     renderHistory();
 }
 
@@ -336,7 +399,7 @@ function renderHistory() {
         `;
 
         // Check if item should go to GST or General list
-        if (item.type === 'GST') {
+        if (item.type === 'GST' || item.type === 'GST_QUICK') {
             gstList.appendChild(div);
             gstCount++;
         } else {
@@ -352,5 +415,23 @@ function renderHistory() {
 
 function clearCalculatorHistory() {
     appState.history = [];
+    saveHistory(); // Clear persistence
     renderHistory();
+}
+
+// --- LOCAL STORAGE ---
+function saveHistory() {
+    localStorage.setItem('gst_calc_history', JSON.stringify(appState.history));
+}
+
+function loadHistory() {
+    const saved = localStorage.getItem('gst_calc_history');
+    if (saved) {
+        try {
+            appState.history = JSON.parse(saved);
+            renderHistory();
+        } catch (e) {
+            console.error('Failed to parse history', e);
+        }
+    }
 }

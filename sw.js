@@ -1,11 +1,11 @@
-const CACHE_NAME = 'gst-calc-v1';
+const CACHE_NAME = 'gst-calc-v5';
 const ASSETS = [
     './',
     './index.html',
     './style.css',
     './app.js',
     './manifest.json',
-    './icon.png'
+    './logo-icon.png'
 ];
 
 // Install Event - Cache Files
@@ -34,6 +34,22 @@ self.addEventListener('activate', (e) => {
 
 // Fetch Event - Serve from Cache, fall back to Network
 self.addEventListener('fetch', (e) => {
+    // Dynamic Caching for Google Fonts
+    if (e.request.url.includes('fonts.googleapis.com') || e.request.url.includes('fonts.gstatic.com')) {
+        e.respondWith(
+            caches.open('gst-fonts').then((cache) => {
+                return cache.match(e.request).then((response) => {
+                    return response || fetch(e.request).then((fetchResponse) => {
+                        cache.put(e.request, fetchResponse.clone());
+                        return fetchResponse;
+                    });
+                });
+            })
+        );
+        return;
+    }
+
+    // Default Cache Strategy
     e.respondWith(
         caches.match(e.request).then((response) => {
             return response || fetch(e.request);

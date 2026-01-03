@@ -3,9 +3,11 @@
     --bg-app: #1e1e24;
     --bg-body: #121212;
     --text-main: #e0e0e0;
-    --text-secondary: #a0a0a0;
-    --accent: #4cc9f0;
-    --accent-hover: #3aa8d0;
+    --text-secondary: #909090;
+    --accent: #d32f2f;
+    /* Red from Image */
+    --accent-hover: #b71c1c;
+    /* Darker Red */
     --surface: #2b2b36;
     --surface-hover: #353542;
     --border: #3d3d4d;
@@ -24,8 +26,9 @@
     --bg-body: #f0f2f5;
     --text-main: #333333;
     --text-secondary: #666666;
-    --accent: #2563eb;
-    --accent-hover: #1d4ed8;
+    --accent: #d32f2f;
+    /* Red */
+    --accent-hover: #b71c1c;
     --surface: #f8f9fa;
     --surface-hover: #e9ecef;
     --border: #dee2e6;
@@ -49,6 +52,8 @@ body {
     align-items: center;
     min-height: 100vh;
     transition: background 0.3s ease;
+    overscroll-behavior-y: contain;
+    /* Disable Pull-to-Refresh */
 }
 
 .app-container {
@@ -86,10 +91,35 @@ header {
     border-radius: 4px;
 }
 
+
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.1;
+}
+
+.brand-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--accent);
+    /* Red */
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.brand-sub {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    /* Grey */
+    letter-spacing: 1px;
+}
+
 header h1 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
+    display: none;
+    /* Hide default h1 styles if any remain */
 }
 
 .icon-btn {
@@ -140,11 +170,18 @@ header h1 {
     cursor: pointer;
     border-bottom: 2px solid transparent;
     transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
 }
 
 .tab-btn.active {
     color: var(--accent);
     border-bottom-color: var(--accent);
+}
+
+.tab-btn:active {
+    transform: scale(0.95);
+    filter: brightness(0.9);
 }
 
 /* Main Content */
@@ -231,45 +268,111 @@ label {
     width: 100%;
 }
 
-.keypad {
+.gst-details {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    min-height: 1rem;
+    margin-top: 5px;
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Revised Calculator Layout */
+.gst-btn-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    margin-bottom: 2px;
+    background: transparent;
+    /* Removed hardcoded separator background */
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+}
+
+.gst-key {
+    background: var(--surface);
+    /* Match theme surface */
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    /* Add border for definition */
+    padding: 12px 2px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.1s, filter 0.1s;
+    position: relative;
+    overflow: hidden;
+    height: 50px;
+    /* Fixed height for GST strip */
+}
+
+.gst-key:hover {
+    background: var(--surface-hover);
+    color: var(--accent);
+}
+
+.gst-key:active {
+    transform: scale(0.95);
+    filter: brightness(1.2);
+}
+
+.calc-main-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    /* Increased gap slightly for cleaner look */
+    background: transparent;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+    padding-top: 2px;
 }
 
 .key {
-    padding: 16px;
-    font-size: 1.25rem;
+    padding: 20px 0;
+    font-size: 1.3rem;
     border: none;
-    background: var(--surface);
-    color: var(--text-main);
-    border-radius: 10px;
     cursor: pointer;
-    transition: filter 0.1s;
-    box-shadow: 0 2px 0 var(--border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    /* Soft rounded keys */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 65px;
+    /* Fixed height for main keys */
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.1s, filter 0.1s;
 }
 
 .key:active {
-    transform: translateY(2px);
-    box-shadow: none;
+    transform: scale(0.95);
+    filter: brightness(1.2);
 }
 
-.key.operator {
-    color: var(--accent);
+.btn-dark-grey {
+    background: var(--surface);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+}
+
+.btn-dark-grey:active {
+    background: var(--surface-hover);
+}
+
+.btn-yellow {
+    background: var(--accent);
+    /* Use Global Orange */
+    color: #fff;
+    /* White text on Orange */
     font-weight: 600;
 }
 
-.key.action {
-    color: var(--danger);
-    font-size: 1rem;
-}
-
-.key.equals-btn {
-    background: var(--accent);
-    color: white;
-    grid-column: span 2;
-    box-shadow: 0 2px 0 #1a759f;
-    /* Slightly darker accent */
+.btn-yellow:active {
+    background: var(--accent-hover);
 }
 
 /* GST Module */
@@ -288,6 +391,8 @@ label {
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
 }
 
 .rate-btn.active {
@@ -359,6 +464,9 @@ label {
 
 .conv-box {
     margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .conv-icon {
@@ -397,6 +505,8 @@ label {
     display: flex;
     align-items: center;
     gap: 5px;
+    position: relative;
+    overflow: hidden;
 }
 
 .smart-btn:hover {
@@ -488,11 +598,18 @@ label {
     transition: all 0.2s;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
 }
 
 .h-subtab:hover {
     background: var(--surface-hover);
     transform: translateY(-1px);
+}
+
+.h-subtab:active {
+    transform: scale(0.95);
+    filter: brightness(0.9);
 }
 
 .h-subtab.active {
