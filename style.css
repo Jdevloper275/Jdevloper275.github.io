@@ -401,11 +401,12 @@ label {
 }
 
 .btn-yellow {
-    background: var(--accent);
-    /* Use Global Orange */
+    /* Lighter/Brighter Orange Gradient */
+    background: linear-gradient(135deg, #FFC107, #FF9800);
     color: #fff;
     /* White text on Orange */
     font-weight: 600;
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
 }
 
 .btn-yellow:active {
