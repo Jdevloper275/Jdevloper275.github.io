@@ -38,14 +38,17 @@
 [data-theme="light"] {
     --bg-app: #ffffff;
     --bg-body: #f0f2f5;
-    --text-main: #333333;
-    --text-secondary: #666666;
-    --accent: #d32f2f;
+    --text-main: #18181b;
+    /* Jet Black for sharp contrast */
+    --text-secondary: #52525b;
+    /* Zinc-600 (Darker, crisper grey) */
+    --accent: #FF5722;
     /* Red */
-    --accent-hover: #b71c1c;
+    --accent-hover: #E64A19;
     --surface: #f8f9fa;
     --surface-hover: #e9ecef;
-    --border: #dee2e6;
+    --border: #e4e4e7;
+    /* Zinc-200 */
     --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     /* Lighter shadow */
 }
