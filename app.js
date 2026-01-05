@@ -472,6 +472,47 @@ function renderHistory() {
     if (gstCount === 0) gstList.innerHTML = '<div class="empty-state">No GST history yet</div>';
 }
 
+if (gstCount === 0) gstList.innerHTML = '<div class="empty-state">No GST history yet</div>';
+}
+
+function copyResult() {
+    const display = document.getElementById('calcDisplay');
+    const val = display.value;
+
+    if (!val || val === '0' || val === 'Error') {
+        showToast('Nothing to copy');
+        return;
+    }
+
+    // Try standard clipboard API first
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(val).then(() => {
+            showToast('Copied');
+        }).catch(err => {
+            fallbackCopy(val);
+        });
+    } else {
+        fallbackCopy(val);
+    }
+}
+
+function fallbackCopy(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";  // Avoid scrolling to bottom
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) showToast('Copied');
+        else showToast('Copy failed');
+    } catch (err) {
+        showToast('Copy failed');
+    }
+    document.body.removeChild(textArea);
+}
+
 function clearCalculatorHistory() {
     appState.history = [];
     saveHistory(); // Clear persistence
