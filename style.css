@@ -270,20 +270,18 @@ label {
 /* Calculator Specific */
 .display-container {
     background: var(--surface);
-    padding: 16px;
-    /* Reduced from 24px */
+    padding: 10px 16px;
     border-radius: var(--radius);
     text-align: right;
-    margin-bottom: 12px;
-    /* Reduced from 24px */
+    margin-bottom: 8px;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
     border: 1px solid var(--border);
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    min-height: 120px;
-    /* Reduced from 140px */
+    min-height: 80px;
+    /* Aggressive reduction */
 }
 
 .calc-preview {
