@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
     updateUnitOptions(); // Initialize conversion options
     loadHistory(); // Load saved history
-    loadHistory(); // Load saved history
     initBackHandler(); // Double back to exit
     preventAccidentalRefresh();
 });
@@ -62,8 +61,10 @@ function calcAction(val) {
         display.value = '0';
         document.getElementById('calcHistory').innerText = '';
         document.getElementById('gstDetails').innerText = '';
+        updatePreview(); // Clear preview
     } else if (val === 'back') {
         display.value = current.length > 1 ? current.slice(0, -1) : '0';
+        updatePreview(); // Update preview
     } else if (val === '=') {
         try {
             // Replace symbols for JS eval
@@ -76,6 +77,8 @@ function calcAction(val) {
             display.value = Number(result.toPrecision(12)); // Clean up floating point errors
             appState.lastCalcResult = parseFloat(display.value);
 
+            document.getElementById('calcPreview').innerText = ''; // Clear preview on result
+
             // Add to History
             addToHistory({
                 type: 'CALC',
@@ -85,11 +88,13 @@ function calcAction(val) {
             });
         } catch (e) {
             display.value = 'Error';
+            document.getElementById('calcPreview').innerText = '';
         }
     } else if (val === '%') {
         try {
             const result = eval(current) / 100;
             display.value = result;
+            updatePreview();
         } catch (e) { display.value = 'Error'; }
     } else {
         // Prevent multiple operators or leading zeros
@@ -100,6 +105,50 @@ function calcAction(val) {
             if (val === '00' && current === '0') return; // Don't add 00 to 0
             display.value += val;
         }
+        updatePreview(); // Update preview on new input
+    }
+}
+
+function updatePreview() {
+    const display = document.getElementById('calcDisplay');
+    const preview = document.getElementById('calcPreview');
+    let current = display.value;
+
+    // Don't show preview for simple numbers or empty state
+    if (!current || current === '0' || current === 'Error') {
+        preview.innerText = '';
+        return;
+    }
+
+    try {
+        // Replace symbols for JS eval
+        const expression = current.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+
+        // If ends with operator, don't eval yet (or eval partial?)
+        // Standard calculator behavior: typically wait for complete numbers. 
+        // But strict eval might fail on trailing operator.
+        // Let's try to eval. If it fails, empty preview.
+
+        // Basic check to see if there is an operator (otherwise it's just the number)
+        if (!/[+\-*/%]/.test(expression)) {
+            preview.innerText = '';
+            return;
+        }
+
+        const result = eval(expression);
+        if (result === undefined || isNaN(result) || !isFinite(result)) {
+            preview.innerText = '';
+        } else {
+            // Don't show if result is same as input (e.g. "50")
+            if (String(result) == current) {
+                preview.innerText = '';
+            } else {
+                preview.innerText = Number(result.toPrecision(12));
+            }
+        }
+    } catch (e) {
+        // Likely incomplete expression like "5+"
+        preview.innerText = '';
     }
 }
 
