@@ -375,7 +375,8 @@ label {
 
 .key {
     padding: 10px 0;
-    font-size: 1.3rem;
+    font-size: 1.6rem;
+    /* Increased from 1.3rem */
     border: none;
     cursor: pointer;
     display: flex;
