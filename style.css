@@ -79,23 +79,40 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    transition: background 0.3s ease;
-    overscroll-behavior-y: contain;
-    /* Disable Pull-to-Refresh */
+    height: 100dvh;
+    /* Force Dynamic Viewport Height */
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    /* Lock scroll globally */
+    position: fixed;
+    /* Fix position to prevent browser UI shifts */
 }
 
 .app-container {
     width: 100%;
-    max-width: 420px;
+    max-width: 480px;
+    /* Increased slightly */
     background-color: var(--bg-app);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    border-radius: 0;
+    /* Full screen on mobile */
+    box-shadow: none;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 90vh;
-    /* Mobile app feel */
-    max-height: 800px;
+    height: 100%;
+    /* Take full body height */
+    max-height: 100%;
+}
+
+@media (min-width: 481px) {
+    .app-container {
+        height: 90vh;
+        max-height: 800px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+    }
 }
 
 /* Header */
@@ -289,8 +306,9 @@ label {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    min-height: 80px;
-    /* Aggressive reduction */
+    min-height: auto;
+    /* Allow shrinking */
+    flex-shrink: 0;
 }
 
 .calc-preview {
