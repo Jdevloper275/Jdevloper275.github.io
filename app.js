@@ -279,6 +279,9 @@ function handleGstButton(rate, mode) {
         detailsEl.innerText = `GST Rem: ${formatCurrency(gstAmt)} (C: ${formatCurrency(cgst)}, S: ${formatCurrency(sgst)})`;
     }
 
+    // Clear Preview immediately to avoid confusion
+    document.getElementById('calcPreview').innerText = '';
+
     // Add to History List
     addToHistory({
         type: 'GST_QUICK',
