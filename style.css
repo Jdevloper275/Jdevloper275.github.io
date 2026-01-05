@@ -375,8 +375,8 @@ label {
 
 .key {
     padding: 10px 0;
-    font-size: 1.6rem;
-    /* Increased from 1.3rem */
+    font-size: 1.3rem;
+    /* Revert to normal */
     border: none;
     cursor: pointer;
     display: flex;
@@ -390,6 +390,11 @@ label {
     position: relative;
     overflow: hidden;
     transition: transform 0.1s, filter 0.1s;
+}
+
+.op-key {
+    font-size: 1.8rem;
+    /* Larger operators */
 }
 
 .key:hover {
