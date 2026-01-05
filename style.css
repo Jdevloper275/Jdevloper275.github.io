@@ -324,30 +324,34 @@ label {
 }
 
 /* Revised Calculator Layout */
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-gap: 8px;
-/* Increased gap */
-margin-bottom: 8px;
-background: transparent;
-overflow: visible;
-/* Allow shadows */
+.gst-btn-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+    background: transparent;
+    overflow: visible;
 }
 
 .gst-key {
     background: var(--surface);
     color: var(--text-main);
     border: 1px solid var(--border);
-    padding: 12px 2px;
-    font-size: 0.9rem;
-    font-weight: 500;
+    /* padding: 12px 2px; Remove padding for flex centering */
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
     transition: transform 0.1s, filter 0.1s;
     position: relative;
     overflow: hidden;
-    height: 50px;
-    border-radius: 50px;
-    /* Fully Round / Pill */
+    height: 55px;
+    /* Taller */
+    border-radius: 28px;
+    /* High radius for Pill Shape */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .gst-key:hover {
