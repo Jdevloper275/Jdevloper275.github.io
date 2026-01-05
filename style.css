@@ -324,23 +324,20 @@ label {
 }
 
 /* Revised Calculator Layout */
-.gst-btn-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-    margin-bottom: 2px;
-    background: transparent;
-    /* Removed hardcoded separator background */
-    border-radius: 8px 8px 0 0;
-    overflow: hidden;
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 8px;
+/* Increased gap */
+margin-bottom: 8px;
+background: transparent;
+overflow: visible;
+/* Allow shadows */
 }
 
 .gst-key {
     background: var(--surface);
-    /* Match theme surface */
     color: var(--text-main);
     border: 1px solid var(--border);
-    /* Add border for definition */
     padding: 12px 2px;
     font-size: 0.9rem;
     font-weight: 500;
@@ -349,7 +346,8 @@ label {
     position: relative;
     overflow: hidden;
     height: 50px;
-    /* Fixed height for GST strip */
+    border-radius: 50px;
+    /* Fully Round / Pill */
 }
 
 .gst-key:hover {
@@ -365,27 +363,25 @@ label {
 .calc-main-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 4px;
-    /* Increased gap slightly for cleaner look */
+    gap: 8px;
+    /* Increased gap */
     background: transparent;
-    border-radius: 0 0 8px 8px;
-    overflow: hidden;
     padding-top: 2px;
 }
 
 .key {
-    padding: 20px 0;
+    padding: 10px 0;
     font-size: 1.3rem;
     border: none;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 8px;
-    /* Soft rounded keys */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    /* Fully Round / Pill */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    /* More premium shadow */
     height: 65px;
-    /* Fixed height for main keys */
     position: relative;
     overflow: hidden;
     transition: transform 0.1s, filter 0.1s;
