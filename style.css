@@ -59,7 +59,16 @@
     padding: 0;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
-    /* Disables double-tap to zoom */
+    /* Prevent double-tap zoom delay */
+    user-select: none;
+    /* Prevent text selection on long press */
+}
+
+input,
+select,
+textarea {
+    user-select: text;
+    /* Allow selection in inputs */
 }
 
 body {
