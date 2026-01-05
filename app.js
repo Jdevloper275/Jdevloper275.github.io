@@ -468,11 +468,7 @@ function renderHistory() {
         }
     });
 
-    if (calcCount === 0) calcList.innerHTML = '<div class="empty-state">No calculations yet</div>';
     if (gstCount === 0) gstList.innerHTML = '<div class="empty-state">No GST history yet</div>';
-}
-
-if (gstCount === 0) gstList.innerHTML = '<div class="empty-state">No GST history yet</div>';
 }
 
 function copyResult() {
