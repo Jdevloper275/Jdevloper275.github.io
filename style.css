@@ -391,6 +391,11 @@ label {
     transition: transform 0.1s, filter 0.1s;
 }
 
+.key:hover {
+    background: var(--surface-hover);
+    color: var(--accent);
+}
+
 .key:active {
     transform: scale(0.95);
     filter: brightness(1.2);
