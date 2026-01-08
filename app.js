@@ -133,13 +133,80 @@ function calcAction(val) {
         }
     } else if (val === '%') {
         try {
-            // Calculate % of current expression immediately? 
-            // Behavior often varies. Here let's just do simple eval/100 as before,
-            // replacing the WHOLE string. 
-            // Or should it insert '%' char? 
-            // The previous code did eval(current)/100.
-            const result = eval(current) / 100;
-            display.value = result;
+            // Context-aware Percentage Calculation
+            // 1. Sanitize expression (replace symbols)
+            let expr = current.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+
+            // 2. Find the last operator
+            // We search for +, -, *, / that are NOT at the start (negative numbers)
+            const operators = ['+', '-', '*', '/'];
+            let lastOpIndex = -1;
+            let lastOp = '';
+
+            for (let i = expr.length - 1; i >= 0; i--) {
+                if (operators.includes(expr[i])) {
+                    lastOpIndex = i;
+                    lastOp = expr[i];
+                    break;
+                }
+            }
+
+            if (lastOpIndex !== -1) {
+                // We have an operator, e.g., "1500+78"
+                // Base = 1500, Percent = 78
+                const baseStr = expr.substring(0, lastOpIndex);
+                const percentStr = expr.substring(lastOpIndex + 1);
+
+                // Use eval to resolve base if it's complex, e.g. "10+20+30"
+                const baseVal = eval(baseStr);
+                const percentVal = parseFloat(percentStr);
+
+                if (!isNaN(baseVal) && !isNaN(percentVal)) {
+                    // Logic: Value = Base * (Percent / 100)
+                    const calculatedValue = baseVal * (percentVal / 100);
+
+                    // Replace the percent number with the calculated value
+                    // e.g. "1500+78" becomes "1500+1170"
+                    const newVal = current.substring(0, lastOpIndex) + lastOp + calculatedValue;
+
+                    // We need to map back to display symbols if needed, but since we modify 'current', 
+                    // we must be careful. Actually 'current' has symbols.
+                    // Let's reconstruction safely.
+                    // The 'baseStr' and 'percentStr' came from sanitized 'expr'.
+                    // We should take 'current' up to finding that operator.
+                    // But 'current' has symbols. Let's find index in 'current'.
+
+                    // Simpler approach:
+                    // 1. Get entire sanitized expression result so far
+                    // 2. Just return the valid number? No, user wants to see "1500+1170"
+
+                    // Let's use the 'calculatedValue' and replace the last number in 'display'
+                    // We need to find the split point in the RAW display value (with symbols)
+                    const rawOperators = ['+', '−', '×', '÷'];
+                    let rawSplitIndex = -1;
+                    for (let i = current.length - 1; i >= 0; i--) {
+                        if (rawOperators.includes(current[i])) {
+                            rawSplitIndex = i;
+                            break;
+                        }
+                    }
+
+                    if (rawSplitIndex !== -1) {
+                        const newDisplay = current.substring(0, rawSplitIndex + 1) + calculatedValue;
+                        display.value = newDisplay;
+                    } else {
+                        // Fallback
+                        display.value = eval(expr) / 100;
+                    }
+
+                } else {
+                    display.value = eval(expr) / 100;
+                }
+            } else {
+                // No operator, simple percentage
+                display.value = eval(expr) / 100;
+            }
+
             display.setSelectionRange(display.value.length, display.value.length);
             updatePreview();
             adjustFontSize();
@@ -611,5 +678,5 @@ function showToast(message) {
 
     setTimeout(() => {
         toast.classList.remove('show');
-    }, 2000);
+    }, 1000);
 }
