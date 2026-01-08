@@ -142,8 +142,14 @@ function calcAction(val) {
             document.getElementById('calcPreview').innerText = '';
         }
     } else if (val === '%') {
-        try {
-            // Context-aware Percentage Calculation
+        // Just append '%' formatting
+        display.value += '%';
+        display.setSelectionRange(display.value.length, display.value.length);
+        updatePreview();
+        adjustFontSize();
+    } else {
+        // Prevent multiple operators or leading zeros
+        if (current === '0' && !['.', '+', '-', '*', '/'].includes(val)) {
             // 1. Sanitize expression (replace symbols)
             let expr = current.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
 
