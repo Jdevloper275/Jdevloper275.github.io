@@ -147,11 +147,6 @@ function calcAction(val) {
         display.setSelectionRange(display.value.length, display.value.length);
         updatePreview();
         adjustFontSize();
-    } else {
-        // Prevent multiple operators or leading zeros
-        if (current === '0' && !['.', '+', '-', '*', '/'].includes(val)) {
-    } else {
-        // Prevent multiple operators or leading zeros
         if (current === '0' && !['.', '+', '-', '*', '/'].includes(val)) {
             display.value = val;
             display.setSelectionRange(1, 1);
