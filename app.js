@@ -147,6 +147,7 @@ function calcAction(val) {
         display.setSelectionRange(display.value.length, display.value.length);
         updatePreview();
         adjustFontSize();
+    } else {
         if (current === '0' && !['.', '+', '-', '*', '/'].includes(val)) {
             display.value = val;
             display.setSelectionRange(1, 1);
