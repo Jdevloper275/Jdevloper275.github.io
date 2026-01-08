@@ -329,13 +329,51 @@ label {
 }
 
 #calcDisplay {
-    background: none;
+    background: transparent;
     border: none;
-    padding: 0;
-    font-size: 2rem;
+    outline: none;
+    box-shadow: none;
+    resize: none;
+    overflow-y: hidden;
+    height: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    min-height: 3rem;
+    line-height: 1.2;
+    padding-top: 10px;
+    font-size: 2.5rem;
+    /* Start large */
     font-family: var(--font-mono);
     text-align: right;
     width: 100%;
+    color: var(--text-main);
+    transition: font-size 0.2s ease, height 0.1s ease;
+    max-height: 120px;
+    /* Limit height to approx 3 lines */
+    overflow-y: auto;
+    /* Enable scroll when limit reached */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+    caret-color: transparent;
+    /* Hide cursor by default */
+}
+
+/* Show cursor when user specifically interacts/edits */
+#calcDisplay.active-cursor {
+    caret-color: var(--accent);
+}
+
+/* Hide scrollbar for Chrome/Safari/Opera */
+#calcDisplay::-webkit-scrollbar {
+    display: none;
+}
+
+#calcDisplay:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
 }
 
 .gst-details {

@@ -4,6 +4,7 @@ const appState = {
     currentTab: 'calc',
     theme: 'dark',
     calcValue: '0',
+    calcValue: '0',
     calcHistory: '',
     gstRate: 18,
     lastCalcResult: 0,
@@ -55,25 +56,62 @@ function setupTabs() {
 // --- CALCULATOR MODULE ---
 function calcAction(val) {
     const display = document.getElementById('calcDisplay');
+
+    // Ensure display has focus so we can use selectionStart/End
+    display.focus();
+
     let current = display.value;
+    let start = display.selectionStart;
+    let end = display.selectionEnd;
+
+    // Helper to insert text at cursor and update position
+    const insertAtCursor = (text) => {
+        const before = current.substring(0, start);
+        const after = current.substring(end);
+        display.value = before + text + after;
+        // Move cursor to end of inserted text
+        const newPos = start + text.length;
+        display.setSelectionRange(newPos, newPos);
+        updatePreview();
+    };
 
     if (val === 'C') {
         display.value = '0';
         document.getElementById('calcHistory').innerText = '';
         document.getElementById('gstDetails').innerText = '';
-        updatePreview(); // Clear preview
+        // Remove cursor visibility on Clear
+        display.classList.remove('active-cursor');
+        updatePreview();
+        adjustFontSize();
     } else if (val === 'back') {
-        display.value = current.length > 1 ? current.slice(0, -1) : '0';
-        updatePreview(); // Update preview
+        if (start === end) {
+            // No selection, delete 1 char back
+            if (start > 0) {
+                const before = current.substring(0, start - 1);
+                const after = current.substring(start);
+                display.value = before + after;
+                display.setSelectionRange(start - 1, start - 1);
+            }
+        } else {
+            // Delete selection
+            const before = current.substring(0, start);
+            const after = current.substring(end);
+            display.value = before + after;
+            display.setSelectionRange(start, start);
+        }
+
+        if (display.value === '') display.value = '0';
+        updatePreview();
+        adjustFontSize();
     } else if (val === '=') {
         try {
             // Replace symbols for JS eval
-            const expression = current.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+            const expression = display.value.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
             // Safety check: only allow numbers and operators
             if (/[^0-9+\-*/().%]/.test(expression)) throw new Error('Invalid Input');
 
             const result = eval(expression);
-            document.getElementById('calcHistory').innerText = current + ' =';
+            document.getElementById('calcHistory').innerText = display.value + ' =';
             display.value = Number(result.toPrecision(12)); // Clean up floating point errors
             appState.lastCalcResult = parseFloat(display.value);
 
@@ -82,31 +120,63 @@ function calcAction(val) {
             // Add to History
             addToHistory({
                 type: 'CALC',
-                expression: current,
+                expression: expression,
                 result: display.value,
                 timestamp: new Date()
             });
+            // Move cursor to end
+            display.setSelectionRange(display.value.length, display.value.length);
+            adjustFontSize();
         } catch (e) {
             display.value = 'Error';
             document.getElementById('calcPreview').innerText = '';
         }
     } else if (val === '%') {
         try {
+            // Calculate % of current expression immediately? 
+            // Behavior often varies. Here let's just do simple eval/100 as before,
+            // replacing the WHOLE string. 
+            // Or should it insert '%' char? 
+            // The previous code did eval(current)/100.
             const result = eval(current) / 100;
             display.value = result;
+            display.setSelectionRange(display.value.length, display.value.length);
             updatePreview();
+            adjustFontSize();
         } catch (e) { display.value = 'Error'; }
     } else {
         // Prevent multiple operators or leading zeros
         if (current === '0' && !['.', '+', '-', '*', '/'].includes(val)) {
             display.value = val;
+            display.setSelectionRange(1, 1);
         } else {
             // Handle 00
             if (val === '00' && current === '0') return; // Don't add 00 to 0
-            display.value += val;
+
+            insertAtCursor(val);
         }
-        updatePreview(); // Update preview on new input
+        adjustFontSize();
     }
+}
+
+function adjustFontSize() {
+    const display = document.getElementById('calcDisplay');
+    const length = display.value.length;
+
+    // Scaling: Large -> Small -> Wrap
+    // Increased threshold for Large size and made Small size slightly larger per user request
+    if (length < 15) {
+        display.style.fontSize = '2.5rem';
+    } else {
+        display.style.fontSize = '1.7rem';
+    }
+
+    // Auto-expand height (up to max-height defined in CSS)
+    display.style.height = 'auto';
+    display.style.height = (display.scrollHeight) + 'px';
+
+    // Auto-scroll to bottom
+    display.scrollTop = display.scrollHeight;
 }
 
 function updatePreview() {
@@ -210,6 +280,12 @@ function showToast(message) {
 
 // --- REFRESH PREVENTION ---
 function preventAccidentalRefresh() {
+    // Display Click Listener for Cursor Visibility
+    const display = document.getElementById('calcDisplay');
+    display.addEventListener('click', () => {
+        display.classList.add('active-cursor');
+    });
+
     window.addEventListener('beforeunload', (e) => {
         // Cancel the event
         e.preventDefault();
