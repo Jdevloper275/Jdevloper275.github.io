@@ -272,7 +272,14 @@ function updatePreview() {
 
     try {
         // Replace symbols for JS eval
-        const expression = current.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+        let expression = current.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+
+        // --- PERCENTAGE PRE-PROCESSING (Match =) ---
+        expression = expression.replace(/(\d+(?:\.\d+)?)([\+\-])(\d+(?:\.\d+)?)%/g, (match, base, op, percent) => {
+            return `${base}${op}(${base}*${percent}/100)`;
+        });
+        expression = expression.replace(/(\d+(?:\.\d+)?)%/g, '$1/100');
+        // -------------------------------------------
 
         // If ends with operator, don't eval yet (or eval partial?)
         // Standard calculator behavior: typically wait for complete numbers. 
