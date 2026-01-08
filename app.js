@@ -164,8 +164,8 @@ function adjustFontSize() {
     const length = display.value.length;
 
     // Scaling: Large -> Small -> Wrap
-    // Increased threshold for Large size and made Small size slightly larger per user request
-    if (length < 15) {
+    // Lower threshold to ensure it shrinks BEFORE wrapping (approx 12 chars)
+    if (length < 12) {
         display.style.fontSize = '2.5rem';
     } else {
         display.style.fontSize = '1.7rem';

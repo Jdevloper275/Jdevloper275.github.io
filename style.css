@@ -306,8 +306,10 @@ label {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    min-height: auto;
-    /* Allow shrinking */
+    height: 160px;
+    /* Fixed height to prevent layout shift */
+    overflow: hidden;
+    /* Contain content */
     flex-shrink: 0;
 }
 
