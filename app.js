@@ -585,7 +585,31 @@ function loadFromHistory(expression) {
     const display = document.getElementById('calcDisplay');
     display.value = expression;
     adjustFontSize(); // update font size
-    
+
+    // Feedback
+    if (navigator.vibrate) navigator.vibrate(50); // Haptic
+    showToast('Loaded from History');
+
     // Switch to Calculator tab
-    switchTab('calc'); 
+    switchTab('calc');
+}
+
+// Toast Notification
+function showToast(message) {
+    let toast = document.querySelector('.toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'toast';
+        document.body.appendChild(toast);
+    }
+    toast.innerText = message;
+
+    // Trigger reflow
+    void toast.offsetWidth;
+
+    toast.classList.add('show');
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2000);
 }
