@@ -175,8 +175,11 @@ function adjustFontSize() {
     display.style.height = 'auto';
     display.style.height = (display.scrollHeight) + 'px';
 
-    // Auto-scroll to bottom
-    display.scrollTop = display.scrollHeight;
+    // Auto-scroll to bottom ONLY if cursor is at the end
+    // This allows editing earlier lines without jumping to the bottom
+    if (display.selectionEnd === display.value.length) {
+        display.scrollTop = display.scrollHeight;
+    }
 }
 
 function updatePreview() {
