@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gst-calc-v51';
+const CACHE_NAME = 'gst-calc-v52';
 const ASSETS = [
     './',
     './index.html',

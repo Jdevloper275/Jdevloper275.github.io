@@ -533,11 +533,14 @@ function renderHistory() {
         const div = document.createElement('div');
         div.className = 'history-card';
 
-        // New Side-by-side layout: Expression (Left) - Result (Right)
+        // New Stacked layout: Expression (Top) - Result (Bottom)
         div.innerHTML = `
             <div class="h-expr">${item.expression} =</div>
             <div class="h-result">${item.result}</div>
         `;
+
+        // Click to load history
+        div.onclick = () => loadFromHistory(item.expression);
 
         // Check if item should go to GST or General list
         if (item.type === 'GST' || item.type === 'GST_QUICK') {
@@ -575,4 +578,14 @@ function loadHistory() {
             console.error('Failed to parse history', e);
         }
     }
+}
+
+// Load history item into calculator
+function loadFromHistory(expression) {
+    const display = document.getElementById('calcDisplay');
+    display.value = expression;
+    adjustFontSize(); // update font size
+    
+    // Switch to Calculator tab
+    switchTab('calc'); 
 }

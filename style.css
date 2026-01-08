@@ -668,12 +668,15 @@ label {
     position: relative;
     transition: transform 0.2s, box-shadow 0.2s;
 
-    /* Strict Side-by-Side Layout */
+    /* Stacked Layout for full visibility */
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    /* Align right */
+    gap: 5px;
+    cursor: pointer;
+    /* Indicate clickable */
 }
 
 .history-card:hover {
@@ -683,13 +686,15 @@ label {
 
 .h-expr {
     font-family: var(--font-mono);
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text-secondary);
     margin-bottom: 0;
-    white-space: nowrap;
-    /* Prevent wrapping */
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: pre-wrap;
+    /* Allow wrapping */
+    word-break: break-all;
+    /* Break long numbers */
+    width: 100%;
+    text-align: right;
 }
 
 .h-result {
