@@ -107,6 +107,7 @@ function calcAction(val) {
         try {
             // Replace symbols for JS eval
             let expression = display.value.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+            const historyExpression = display.value; // Store original for history
 
             // --- PERCENTAGE PRE-PROCESSING ---
             // 1. Handle "Base + N%" -> "Base + (Base * N/100)"
@@ -121,7 +122,7 @@ function calcAction(val) {
             if (/[^0-9+\-*/().%]/.test(expression)) throw new Error('Invalid Input');
 
             const result = eval(expression);
-            document.getElementById('calcHistory').innerText = display.value + ' =';
+            document.getElementById('calcHistory').innerText = historyExpression + ' =';
             display.value = Number(result.toPrecision(12)); // Clean up floating point errors
             appState.lastCalcResult = parseFloat(display.value);
 
@@ -130,7 +131,7 @@ function calcAction(val) {
             // Add to History
             addToHistory({
                 type: 'CALC',
-                expression: expression,
+                expression: historyExpression,
                 result: display.value,
                 timestamp: new Date()
             });
