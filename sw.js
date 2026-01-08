@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gst-calc-v58';
+const CACHE_NAME = 'gst-calc-v59';
 const ASSETS = [
     './',
     './index.html',
@@ -10,6 +10,8 @@ const ASSETS = [
 
 // Install Event - Cache Files
 self.addEventListener('install', (e) => {
+    // Force immediate activation
+    self.skipWaiting();
     e.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll(ASSETS);
@@ -28,7 +30,7 @@ self.addEventListener('activate', (e) => {
                     }
                 })
             );
-        })
+        }).then(() => self.clients.claim()) // Take control immediately
     );
 });
 
