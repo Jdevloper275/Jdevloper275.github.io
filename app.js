@@ -106,7 +106,17 @@ function calcAction(val) {
     } else if (val === '=') {
         try {
             // Replace symbols for JS eval
-            const expression = display.value.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+            let expression = display.value.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+
+            // --- PERCENTAGE PRE-PROCESSING ---
+            // 1. Handle "Base + N%" -> "Base + (Base * N/100)"
+            expression = expression.replace(/(\d+(?:\.\d+)?)([\+\-])(\d+(?:\.\d+)?)%/g, (match, base, op, percent) => {
+                return `${base}${op}(${base}*${percent}/100)`;
+            });
+            // 2. Handle simple "N%" -> "N/100"
+            expression = expression.replace(/(\d+(?:\.\d+)?)%/g, '$1/100');
+            // -----------------------------
+
             // Safety check: only allow numbers and operators
             if (/[^0-9+\-*/().%]/.test(expression)) throw new Error('Invalid Input');
 
