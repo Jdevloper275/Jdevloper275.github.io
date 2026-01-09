@@ -9,10 +9,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Chandan Calculator</title>
     <!-- Critical Resource Preloading -->
-    <link rel="preload" href="style.css?v=2.7" as="style">
-    <link rel="preload" href="app.js?v=2.7" as="script">
+    <link rel="preload" href="style.css?v=2.8" as="style">
+    <link rel="preload" href="app.js?v=2.8" as="script">
 
-    <link rel="stylesheet" href="style.css?v=2.7">
+    <link rel="stylesheet" href="style.css?v=2.8">
 
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
@@ -85,14 +85,14 @@
                     <button class="key btn-dark-grey" onclick="calcAction('8')">8</button>
                     <button class="key btn-dark-grey" onclick="calcAction('9')">9</button>
                     <button class="key btn-dark-grey op-key" onclick="calcAction('/')">÷</button>
-                    <button class="key btn-light" onclick="calcAction('back')">⌫</button>
+                    <button class="key btn-light" onclick="calcAction('C')">AC</button>
 
                     <!-- Row 2 -->
                     <button class="key btn-dark-grey" onclick="calcAction('4')">4</button>
                     <button class="key btn-dark-grey" onclick="calcAction('5')">5</button>
                     <button class="key btn-dark-grey" onclick="calcAction('6')">6</button>
                     <button class="key btn-dark-grey op-key" onclick="calcAction('*')">×</button>
-                    <button class="key btn-light" onclick="calcAction('C')">AC</button>
+                    <button class="key btn-light" onclick="calcAction('back')">⌫</button>
 
                     <!-- Row 3 -->
                     <button class="key btn-dark-grey" onclick="calcAction('1')">1</button>
@@ -166,7 +166,7 @@
         </main>
     </div>
 
-    <script src="app.js?v=2.7"></script>
+    <script src="app.js?v=2.8"></script>
 
     <!-- PWA Service Worker -->
     <script>
