@@ -104,37 +104,49 @@ function renderKeypad() {
 
             // Events
             if (isConfigurable) {
-                // Long Press Logic w/ Jitter Tolerance
+                // Pointer Events (Unified Touch/Mouse)
 
-                // Touch Events
-                btn.addEventListener('touchstart', (e) => {
+                btn.addEventListener('pointerdown', (e) => {
+                    // Capture pointer to track movement even if it leaves element bounds slightly
+                    btn.setPointerCapture(e.pointerId);
+
                     // Track starting coordinates
-                    const touch = e.touches[0];
-                    btn.dataset.startX = touch.clientX;
-                    btn.dataset.startY = touch.clientY;
+                    btn.dataset.startX = e.clientX;
+                    btn.dataset.startY = e.clientY;
+
                     startLongPress(e, btn, mySlotIndex);
-                }, { passive: true });
+                });
 
-                btn.addEventListener('touchmove', (e) => {
-                    // Calculate movement distance
+                btn.addEventListener('pointermove', (e) => {
                     if (!btn.dataset.startX) return;
-                    const touch = e.touches[0];
-                    const moveX = Math.abs(touch.clientX - parseFloat(btn.dataset.startX));
-                    const moveY = Math.abs(touch.clientY - parseFloat(btn.dataset.startY));
 
-                    // Tolerance: 10px radius
+                    const moveX = Math.abs(e.clientX - parseFloat(btn.dataset.startX));
+                    const moveY = Math.abs(e.clientY - parseFloat(btn.dataset.startY));
+
+                    // Tolerance: 10px
                     if (moveX > 10 || moveY > 10) {
                         cancelLongPress(btn);
                     }
-                }, { passive: true });
+                });
 
-                btn.addEventListener('touchend', (e) => endLongPress(e, btn));
-                btn.addEventListener('touchcancel', (e) => cancelLongPress(btn));
+                btn.addEventListener('pointerup', (e) => {
+                    endLongPress(e, btn);
+                    btn.releasePointerCapture(e.pointerId);
+                });
 
-                // Mouse Events (Desktop)
-                btn.addEventListener('mousedown', (e) => startLongPress(e, btn, mySlotIndex));
-                btn.addEventListener('mouseup', (e) => endLongPress(e, btn));
-                btn.addEventListener('mouseleave', (e) => cancelLongPress(btn));
+                btn.addEventListener('pointercancel', (e) => {
+                    cancelLongPress(btn);
+                    btn.releasePointerCapture(e.pointerId);
+                });
+
+                btn.addEventListener('pointerleave', (e) => {
+                    // Optional: if pointer leaves button area significantly, cancel?
+                    // With setPointerCapture, we receive events even outside.
+                    // Let's rely on distance check in pointermove instead of leave
+                    // But if capture is lost or something:
+                    // cancelLongPress(btn); 
+                    // Actually, let's keep capture logic main.
+                });
 
                 // Prevent Context Menu
                 btn.addEventListener('contextmenu', (e) => {
@@ -142,9 +154,10 @@ function renderKeypad() {
                     if (isLongPress) return false;
                 });
 
-                // Normal Click Handling
+                // Click Handling
+                // With pointer events, we can treat pointerup as click if not long press
+                // But keeping onclick is safer for general 'click' semantics
                 btn.onclick = (e) => {
-                    // Allow click only if long press did NOT successfully trigger
                     if (!isLongPress && key !== 'empty') {
                         calcAction(key === 'AC' ? 'C' : (key === 'back' ? 'back' : key));
                     }
