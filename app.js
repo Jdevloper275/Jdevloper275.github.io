@@ -104,18 +104,28 @@ function renderKeypad() {
 
             // Events
             if (isConfigurable) {
-                // Long Press Logic
+                // Long Press Logic w/ Jitter Tolerance
 
                 // Touch Events
                 btn.addEventListener('touchstart', (e) => {
-                    // Don't prevent default here to allow scrolling, 
-                    // but we will cancel long press on move
+                    // Track starting coordinates
+                    const touch = e.touches[0];
+                    btn.dataset.startX = touch.clientX;
+                    btn.dataset.startY = touch.clientY;
                     startLongPress(e, btn, mySlotIndex);
-                }, { passive: true }); // Passive true for better scroll performance
+                }, { passive: true });
 
                 btn.addEventListener('touchmove', (e) => {
-                    // If user moves finger, cancel long press (they are scrolling)
-                    cancelLongPress(btn);
+                    // Calculate movement distance
+                    if (!btn.dataset.startX) return;
+                    const touch = e.touches[0];
+                    const moveX = Math.abs(touch.clientX - parseFloat(btn.dataset.startX));
+                    const moveY = Math.abs(touch.clientY - parseFloat(btn.dataset.startY));
+
+                    // Tolerance: 10px radius
+                    if (moveX > 10 || moveY > 10) {
+                        cancelLongPress(btn);
+                    }
                 }, { passive: true });
 
                 btn.addEventListener('touchend', (e) => endLongPress(e, btn));
@@ -126,18 +136,16 @@ function renderKeypad() {
                 btn.addEventListener('mouseup', (e) => endLongPress(e, btn));
                 btn.addEventListener('mouseleave', (e) => cancelLongPress(btn));
 
-                // Prevent Context Menu (Right Click / Long Touch menu)
+                // Prevent Context Menu
                 btn.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
-                    return false;
+                    if (isLongPress) return false;
                 });
 
                 // Normal Click Handling
-                // We handle click in 'endLongPress' to differentiate better or standard onclick
-                // For simplicity, let's keep onclick but ensure it doesn't fire if long press happened
                 btn.onclick = (e) => {
+                    // Allow click only if long press did NOT successfully trigger
                     if (!isLongPress && key !== 'empty') {
-                        // Only trigger action if it wasn't a long press
                         calcAction(key === 'AC' ? 'C' : (key === 'back' ? 'back' : key));
                     }
                 };
