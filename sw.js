@@ -1,9 +1,9 @@
-const CACHE_NAME = 'gst-calc-v61';
+const CACHE_NAME = 'gst-calc-v62';
 const ASSETS = [
     '/',
-    '/index.html?v=2.9',
-    '/style.css?v=2.9',
-    '/app.js?v=2.9',
+    '/index.html?v=2.91',
+    '/style.css?v=2.91',
+    '/app.js?v=2.91',
     '/manifest.json',
     '/icon-192.png',
     '/icon-512.png'

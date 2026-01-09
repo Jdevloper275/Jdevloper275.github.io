@@ -105,18 +105,43 @@ function renderKeypad() {
             // Events
             if (isConfigurable) {
                 // Long Press Logic
-                btn.addEventListener('touchstart', (e) => startLongPress(e, btn, mySlotIndex), { passive: false });
-                btn.addEventListener('touchend', endLongPress);
-                btn.addEventListener('mousedown', (e) => startLongPress(e, btn, mySlotIndex));
-                btn.addEventListener('mouseup', endLongPress);
-                btn.addEventListener('mouseleave', endLongPress);
 
-                // Normal Click (if not long press)
+                // Touch Events
+                btn.addEventListener('touchstart', (e) => {
+                    // Don't prevent default here to allow scrolling, 
+                    // but we will cancel long press on move
+                    startLongPress(e, btn, mySlotIndex);
+                }, { passive: true }); // Passive true for better scroll performance
+
+                btn.addEventListener('touchmove', (e) => {
+                    // If user moves finger, cancel long press (they are scrolling)
+                    cancelLongPress(btn);
+                }, { passive: true });
+
+                btn.addEventListener('touchend', (e) => endLongPress(e, btn));
+                btn.addEventListener('touchcancel', (e) => cancelLongPress(btn));
+
+                // Mouse Events (Desktop)
+                btn.addEventListener('mousedown', (e) => startLongPress(e, btn, mySlotIndex));
+                btn.addEventListener('mouseup', (e) => endLongPress(e, btn));
+                btn.addEventListener('mouseleave', (e) => cancelLongPress(btn));
+
+                // Prevent Context Menu (Right Click / Long Touch menu)
+                btn.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    return false;
+                });
+
+                // Normal Click Handling
+                // We handle click in 'endLongPress' to differentiate better or standard onclick
+                // For simplicity, let's keep onclick but ensure it doesn't fire if long press happened
                 btn.onclick = (e) => {
                     if (!isLongPress && key !== 'empty') {
+                        // Only trigger action if it wasn't a long press
                         calcAction(key === 'AC' ? 'C' : (key === 'back' ? 'back' : key));
                     }
                 };
+
             } else {
                 // Fixed keys
                 btn.onclick = () => calcAction(key);
@@ -128,28 +153,31 @@ function renderKeypad() {
 }
 
 function startLongPress(e, btn, index) {
-    if (e.type === 'touchstart') {
-        // Prevent default context menu on extensive hold if desired, 
-        // but be careful not to block scroll.
-    }
     isLongPress = false;
     currentSlotIndex = index;
 
-    // Add visual feedback class
+    // Add visual feedback
     btn.classList.add('pressing');
 
     longPressTimer = setTimeout(() => {
         isLongPress = true;
-        btn.classList.remove('pressing');
+        btn.classList.remove('pressing'); // Remove press effect when acting
+
         // Trigger Haptic
-        if (navigator.vibrate) navigator.vibrate(50);
+        if (navigator.vibrate) navigator.vibrate([50]);
+
         showLayoutModal();
-    }, 800); // 800ms hold
+    }, 600); // Reduced to 600ms for snappier feel
 }
 
-function endLongPress(e) {
+function cancelLongPress(btn) {
     clearTimeout(longPressTimer);
-    const btn = e.target.closest('.key');
+    if (btn) btn.classList.remove('pressing');
+}
+
+function endLongPress(e, btnHTML) {
+    clearTimeout(longPressTimer);
+    const btn = btnHTML || e.target.closest('.key');
     if (btn) btn.classList.remove('pressing');
 }
 
