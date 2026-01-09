@@ -466,12 +466,16 @@ label {
 
 .key:hover {
     background: var(--surface-hover);
+    touch-action: none;
+    /* Disable native gestures on keys */
     color: var(--accent);
 }
 
 .key:active {
-    transform: scale(0.95);
     filter: brightness(1.2);
+    transform: scale(0.95);
+    box-shadow: 0 0 15px var(--accent);
+    /* Good light glow */
 }
 
 .btn-dark-grey {
