@@ -104,13 +104,12 @@ function renderKeypad() {
 
             // Events
             if (isConfigurable) {
-                // Pointer Events (Unified Touch/Mouse)
+                // Robust Pointer Events
 
                 btn.addEventListener('pointerdown', (e) => {
-                    // Capture pointer to track movement even if it leaves element bounds slightly
-                    btn.setPointerCapture(e.pointerId);
+                    // Try capture, but don't fail if it doesn't work
+                    try { btn.setPointerCapture(e.pointerId); } catch (err) { }
 
-                    // Track starting coordinates
                     btn.dataset.startX = e.clientX;
                     btn.dataset.startY = e.clientY;
 
@@ -118,45 +117,35 @@ function renderKeypad() {
                 });
 
                 btn.addEventListener('pointermove', (e) => {
-                    if (!btn.dataset.startX) return;
+                    if (!isLongPress && btn.dataset.startX) {
+                        const moveX = Math.abs(e.clientX - parseFloat(btn.dataset.startX));
+                        const moveY = Math.abs(e.clientY - parseFloat(btn.dataset.startY));
 
-                    const moveX = Math.abs(e.clientX - parseFloat(btn.dataset.startX));
-                    const moveY = Math.abs(e.clientY - parseFloat(btn.dataset.startY));
-
-                    // Tolerance: 10px
-                    if (moveX > 10 || moveY > 10) {
-                        cancelLongPress(btn);
+                        // Increased Tolerance: 25px (Fat Finger Buffer)
+                        if (moveX > 25 || moveY > 25) {
+                            cancelLongPress(btn);
+                            btn.dataset.startX = ''; // Stop checking
+                        }
                     }
                 });
 
                 btn.addEventListener('pointerup', (e) => {
                     endLongPress(e, btn);
-                    btn.releasePointerCapture(e.pointerId);
+                    try { btn.releasePointerCapture(e.pointerId); } catch (err) { }
                 });
 
                 btn.addEventListener('pointercancel', (e) => {
                     cancelLongPress(btn);
-                    btn.releasePointerCapture(e.pointerId);
+                    try { btn.releasePointerCapture(e.pointerId); } catch (err) { }
                 });
 
-                btn.addEventListener('pointerleave', (e) => {
-                    // Optional: if pointer leaves button area significantly, cancel?
-                    // With setPointerCapture, we receive events even outside.
-                    // Let's rely on distance check in pointermove instead of leave
-                    // But if capture is lost or something:
-                    // cancelLongPress(btn); 
-                    // Actually, let's keep capture logic main.
-                });
-
-                // Prevent Context Menu
+                // Nuclear Option for Context Menu
                 btn.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
-                    if (isLongPress) return false;
+                    e.stopPropagation();
+                    return false;
                 });
 
-                // Click Handling
-                // With pointer events, we can treat pointerup as click if not long press
-                // But keeping onclick is safer for general 'click' semantics
                 btn.onclick = (e) => {
                     if (!isLongPress && key !== 'empty') {
                         calcAction(key === 'AC' ? 'C' : (key === 'back' ? 'back' : key));
