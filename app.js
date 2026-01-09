@@ -9,8 +9,21 @@ const appState = {
     gstRate: 18,
     lastCalcResult: 0,
     lastConvResult: 0,
-    history: []
+    history: [],
+    layout: {
+        // 8 Configurable Slots
+        // R1: Slot 0, Slot 1
+        // R2: Slot 2, Slot 3
+        // R3: Slot 4, Slot 5
+        // R4: Slot 6, Slot 7
+        // Default matches v60 state (AC on top)
+        slots: ['/', 'AC', '*', 'back', '-', '%', '+', '=']
+    }
 };
+
+let longPressTimer;
+let isLongPress = false;
+let currentSlotIndex = -1;
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -19,8 +32,170 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUnitOptions(); // Initialize conversion options
     loadHistory(); // Load saved history
     initBackHandler(); // Double back to exit
+    renderKeypad(); // Draw the grid
+    // renderSettings(); REMOVED
     preventAccidentalRefresh();
 });
+
+// --- DYNAMIC LAYOUT ---
+function renderKeypad() {
+    const grid = document.getElementById('keypadGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const slots = appState.layout.slots;
+
+    // Fixed Numeric Grid + Dynamic Slots
+    // R1: 7, 8, 9, Slot0, Slot1
+    // R2: 4, 5, 6, Slot2, Slot3
+    // R3: 1, 2, 3, Slot4, Slot5
+    // R4: 0, 00, ., Slot6, Slot7
+
+    const rows = [
+        ['7', '8', '9', slots[0], slots[1]],
+        ['4', '5', '6', slots[2], slots[3]],
+        ['1', '2', '3', slots[4], slots[5]],
+        ['0', '00', '.', slots[6], slots[7]]
+    ];
+
+    let slotCounter = 0;
+
+    rows.forEach(row => {
+        row.forEach(key => {
+            const btn = document.createElement('button');
+
+            // Determine if this is a configurable slot
+            // Digits are fixed. 
+            const isConfigurable = !['7', '8', '9', '4', '5', '6', '1', '2', '3', '0', '00', '.'].includes(key);
+            let mySlotIndex = -1;
+
+            if (isConfigurable) {
+                mySlotIndex = slotCounter++;
+            }
+
+            // Handle Empty Slot
+            if (key === 'empty') {
+                btn.className = 'key btn-dark-grey';
+                // Even empty slots need to be clickable to configure
+                btn.innerText = '+'; // Show placeholder
+                btn.style.opacity = '0.3';
+            } else {
+                // Text & Style
+                let text = key;
+                let styleClass = 'btn-dark-grey';
+
+                if (['/', '*', '-', '+', '='].includes(key)) {
+                    styleClass = key === '=' ? 'btn-yellow op-key' : 'btn-dark-grey op-key';
+                    if (key === '/') text = '÷';
+                    if (key === '*') text = '×';
+                    if (key === '-') text = '−';
+                } else if (key === 'AC') {
+                    text = 'AC';
+                    styleClass = 'btn-light';
+                } else if (key === 'back') {
+                    text = '⌫';
+                    styleClass = 'btn-light';
+                } else if (key === '%') {
+                    styleClass = 'btn-light';
+                }
+                btn.className = `key ${styleClass}`;
+                btn.innerText = text;
+            }
+
+            // Events
+            if (isConfigurable) {
+                // Long Press Logic
+                btn.addEventListener('touchstart', (e) => startLongPress(e, btn, mySlotIndex), { passive: false });
+                btn.addEventListener('touchend', endLongPress);
+                btn.addEventListener('mousedown', (e) => startLongPress(e, btn, mySlotIndex));
+                btn.addEventListener('mouseup', endLongPress);
+                btn.addEventListener('mouseleave', endLongPress);
+
+                // Normal Click (if not long press)
+                btn.onclick = (e) => {
+                    if (!isLongPress && key !== 'empty') {
+                        calcAction(key === 'AC' ? 'C' : (key === 'back' ? 'back' : key));
+                    }
+                };
+            } else {
+                // Fixed keys
+                btn.onclick = () => calcAction(key);
+            }
+
+            grid.appendChild(btn);
+        });
+    });
+}
+
+function startLongPress(e, btn, index) {
+    if (e.type === 'touchstart') {
+        // Prevent default context menu on extensive hold if desired, 
+        // but be careful not to block scroll.
+    }
+    isLongPress = false;
+    currentSlotIndex = index;
+
+    // Add visual feedback class
+    btn.classList.add('pressing');
+
+    longPressTimer = setTimeout(() => {
+        isLongPress = true;
+        btn.classList.remove('pressing');
+        // Trigger Haptic
+        if (navigator.vibrate) navigator.vibrate(50);
+        showLayoutModal();
+    }, 800); // 800ms hold
+}
+
+function endLongPress(e) {
+    clearTimeout(longPressTimer);
+    const btn = e.target.closest('.key');
+    if (btn) btn.classList.remove('pressing');
+}
+
+function showLayoutModal() {
+    const modal = document.getElementById('layoutModal');
+    const container = document.getElementById('modalOptions');
+    container.innerHTML = '';
+
+    const options = [
+        { val: 'AC', label: 'AC' },
+        { val: 'back', label: '⌫' },
+        { val: '/', label: '÷' },
+        { val: '*', label: '×' },
+        { val: '-', label: '−' },
+        { val: '+', label: '+' },
+        { val: '%', label: '%' },
+        { val: '=', label: '=' },
+        { val: 'empty', label: 'Empty' }
+    ];
+
+    options.forEach(opt => {
+        const div = document.createElement('div');
+        div.className = 'modal-option';
+        div.innerText = opt.label;
+        if (appState.layout.slots[currentSlotIndex] === opt.val) {
+            div.classList.add('selected');
+        }
+        div.onclick = () => {
+            updateSlot(currentSlotIndex, opt.val);
+            closeLayoutModal();
+        };
+        container.appendChild(div);
+    });
+
+    modal.classList.add('active');
+}
+
+function closeLayoutModal() {
+    document.getElementById('layoutModal').classList.remove('active');
+}
+
+function updateSlot(index, value) {
+    appState.layout.slots[index] = value;
+    renderKeypad();
+    // Save to local storage if implementing persistence
+}
 
 // --- THEME HANDLING ---
 function initTheme() {

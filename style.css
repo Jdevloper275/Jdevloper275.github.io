@@ -640,6 +640,9 @@ label {
     gap: 5px;
     position: relative;
     overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    /* Safari/Chrome */
 }
 
 .smart-btn:hover {
@@ -790,4 +793,88 @@ label {
 .toast.show {
     opacity: 1;
     bottom: 100px;
+}
+
+
+/* --- MODAL & LONG PRESS --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    backdrop-filter: blur(4px);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: var(--surface);
+    padding: 24px;
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transform: translateY(20px);
+    transition: transform 0.2s;
+    border: 1px solid var(--border);
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-content h3 {
+    text-align: center;
+    margin: 0;
+    color: var(--text-main);
+}
+
+.modal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.modal-option {
+    padding: 12px;
+    background: var(--bg-body);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50px;
+}
+
+.modal-option:active,
+.modal-option.selected {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+/* Long Press Animation */
+.key.pressing {
+    transform: scale(0.9);
+    filter: brightness(1.2);
+    box-shadow: 0 0 15px var(--accent);
+    transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
 }

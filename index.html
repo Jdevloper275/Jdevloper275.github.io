@@ -79,34 +79,9 @@
                 </div>
 
                 <!-- Main Calculator Grid (5 Columns) -->
-                <div class="calc-main-grid">
-                    <!-- Row 1 -->
-                    <button class="key btn-dark-grey" onclick="calcAction('7')">7</button>
-                    <button class="key btn-dark-grey" onclick="calcAction('8')">8</button>
-                    <button class="key btn-dark-grey" onclick="calcAction('9')">9</button>
-                    <button class="key btn-dark-grey op-key" onclick="calcAction('/')">÷</button>
-                    <button class="key btn-light" onclick="calcAction('C')">AC</button>
-
-                    <!-- Row 2 -->
-                    <button class="key btn-dark-grey" onclick="calcAction('4')">4</button>
-                    <button class="key btn-dark-grey" onclick="calcAction('5')">5</button>
-                    <button class="key btn-dark-grey" onclick="calcAction('6')">6</button>
-                    <button class="key btn-dark-grey op-key" onclick="calcAction('*')">×</button>
-                    <button class="key btn-light" onclick="calcAction('back')">⌫</button>
-
-                    <!-- Row 3 -->
-                    <button class="key btn-dark-grey" onclick="calcAction('1')">1</button>
-                    <button class="key btn-dark-grey" onclick="calcAction('2')">2</button>
-                    <button class="key btn-dark-grey" onclick="calcAction('3')">3</button>
-                    <button class="key btn-dark-grey op-key" onclick="calcAction('-')">−</button>
-                    <button class="key btn-light" onclick="calcAction('%')">%</button>
-
-                    <!-- Row 4 -->
-                    <button class="key btn-dark-grey" onclick="calcAction('0')">0</button>
-                    <button class="key btn-dark-grey" onclick="calcAction('00')">00</button>
-                    <button class="key btn-dark-grey" onclick="calcAction('.')">.</button>
-                    <button class="key btn-dark-grey op-key" onclick="calcAction('+')">+</button>
-                    <button class="key btn-yellow op-key" onclick="calcAction('=')">=</button>
+                <!-- Main Calculator Grid (Dynamic) -->
+                <div class="calc-main-grid" id="keypadGrid">
+                    <!-- Buttons rendered by app.js -->
                 </div>
             </section>
 
@@ -164,6 +139,18 @@
             </section>
 
         </main>
+    </div>
+
+    <!-- Layout Editor Modal -->
+    <div id="layoutModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Choose Function</h3>
+            <div class="modal-grid" id="modalOptions"></div>
+            <button class="secondary-btn" onclick="closeLayoutModal()">Cancel</button>
+        </div>
+    </div>
+
+    </main>
     </div>
 
     <script src="app.js?v=2.8"></script>
