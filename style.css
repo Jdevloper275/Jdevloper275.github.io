@@ -469,9 +469,13 @@ label {
     touch-action: none;
     /* Disable native gestures on keys */
     color: var(--accent);
+    -webkit-tap-highlight-color: transparent;
+    /* Remove Android blue overlay */
 }
 
-.key:active {
+/* Combine pseudo-class and JS class for robustness */
+.key:active,
+.key.active-state {
     filter: brightness(1.2);
     transform: scale(0.95);
     box-shadow: 0 0 15px var(--accent);

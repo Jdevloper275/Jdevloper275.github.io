@@ -110,6 +110,9 @@ function renderKeypad() {
                     // Try capture, but don't fail if it doesn't work
                     try { btn.setPointerCapture(e.pointerId); } catch (err) { }
 
+                    // Visual Feedback (JS enforced for PWA)
+                    btn.classList.add('active-state');
+
                     btn.dataset.startX = e.clientX;
                     btn.dataset.startY = e.clientY;
 
@@ -125,17 +128,20 @@ function renderKeypad() {
                         if (moveX > 25 || moveY > 25) {
                             cancelLongPress(btn);
                             btn.dataset.startX = ''; // Stop checking
+                            btn.classList.remove('active-state'); // Finger moved away
                         }
                     }
                 });
 
                 btn.addEventListener('pointerup', (e) => {
                     endLongPress(e, btn);
+                    btn.classList.remove('active-state');
                     try { btn.releasePointerCapture(e.pointerId); } catch (err) { }
                 });
 
                 btn.addEventListener('pointercancel', (e) => {
                     cancelLongPress(btn);
+                    btn.classList.remove('active-state');
                     try { btn.releasePointerCapture(e.pointerId); } catch (err) { }
                 });
 
@@ -153,8 +159,12 @@ function renderKeypad() {
                 };
 
             } else {
-                // Fixed keys
+                // Fixed keys - also add visual feedback
                 btn.onclick = () => calcAction(key);
+                btn.addEventListener('pointerdown', () => btn.classList.add('active-state'));
+                btn.addEventListener('pointerup', () => btn.classList.remove('active-state'));
+                btn.addEventListener('pointercancel', () => btn.classList.remove('active-state'));
+                btn.addEventListener('pointerleave', () => btn.classList.remove('active-state'));
             }
 
             grid.appendChild(btn);
