@@ -1,0 +1,206 @@
+%PDF-1.4
+%
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 5 0 R 7 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 9 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 2078 >>
+stream
+BT
+/F1 11 Tf
+50 740 Td
+(# Beginner Guide: BonChat Code Auto-Paste to 5 Accounts \(Android\)) Tj
+0 -14 Td () Tj
+0 -14 Td (## 1\) Goal) Tj
+0 -14 Td (This setup lets your spare Android phone do the following:) Tj
+0 -14 Td (- Listen for code messages from BonChat.) Tj
+0 -14 Td (- Accept only valid 9-character alphanumeric codes.) Tj
+0 -14 Td (- Work only during two time windows:) Tj
+0 -14 Td (  - 11:55 AM to 12:15 PM) Tj
+0 -14 Td (  - 5:55 PM to 6:15 PM) Tj
+0 -14 Td (- Open each account URL, go to Futures -> Invited me, paste code, and press Confirm.) Tj
+0 -14 Td (- Close browser tabs after each account to reduce memory use.) Tj
+0 -14 Td (- Optionally wake phone at start and lock phone at end.) Tj
+0 -14 Td () Tj
+0 -14 Td (## 2\) Requirements) Tj
+0 -14 Td (- Android phone \(your old Redmi is fine\).) Tj
+0 -14 Td (- Charger connected and internet always ON.) Tj
+0 -14 Td (- Apps:) Tj
+0 -14 Td (  1. Tasker) Tj
+0 -14 Td (  2. AutoNotification) Tj
+0 -14 Td (  3. AutoInput) Tj
+0 -14 Td (  4. Chrome \(or Kiwi Browser\)) Tj
+0 -14 Td () Tj
+0 -14 Td (## 3\) Phone settings \(must do\)) Tj
+0 -14 Td (For Tasker, AutoNotification, AutoInput, and Chrome:) Tj
+0 -14 Td (- Disable battery optimization.) Tj
+0 -14 Td (- Enable Auto-start / background run.) Tj
+0 -14 Td (- Allow notification access \(AutoNotification\).) Tj
+0 -14 Td (- Allow accessibility service \(AutoInput\).) Tj
+0 -14 Td () Tj
+0 -14 Td (These settings are required, otherwise automation may stop in background.) Tj
+0 -14 Td () Tj
+0 -14 Td (## 4\) Save account URLs) Tj
+0 -14 Td (Prepare 5 URLs \(one per account\):) Tj
+0 -14 Td (- URL1) Tj
+0 -14 Td (- URL2) Tj
+0 -14 Td (- URL3) Tj
+0 -14 Td (- URL4) Tj
+0 -14 Td (- URL5) Tj
+0 -14 Td () Tj
+0 -14 Td (Each URL should open with login already saved.) Tj
+0 -14 Td () Tj
+0 -14 Td (## 5\) Tasker variables) Tj
+0 -14 Td (Create these global variables:) Tj
+0 -14 Td (- %listen = 0   \(window OFF by default\)) Tj
+0 -14 Td (- %latest_code = \(empty\)) Tj
+0 -14 Td (- %code_count = 0) Tj
+0 -14 Td (- %target_url = \(used when submitting each account\)) Tj
+0 -14 Td () Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 9 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 1915 >>
+stream
+BT
+/F1 11 Tf
+50 740 Td
+(## 6\) Task: WINDOW_ON) Tj
+0 -14 Td (Actions:) Tj
+0 -14 Td (1. Set %listen = 1) Tj
+0 -14 Td (2. Set %latest_code = empty) Tj
+0 -14 Td (3. Set %code_count = 0) Tj
+0 -14 Td (4. Notify: "Code window started") Tj
+0 -14 Td () Tj
+0 -14 Td (## 7\) Task: GET_CODE_FROM_BONCHAT) Tj
+0 -14 Td (Use this task with AutoNotification Intercept.) Tj
+0 -14 Td () Tj
+0 -14 Td (Actions:) Tj
+0 -14 Td (1. If %listen != 1 -> Stop) Tj
+0 -14 Td (2. Set %msg = %antext) Tj
+0 -14 Td (3. Regex extract: \([A-Za-z0-9]{9}\) from %msg, store match in %m1) Tj
+0 -14 Td (4. If %m1 is not valid -> Stop) Tj
+0 -14 Td (5. Set %latest_code = %m1) Tj
+0 -14 Td (6. Add 1 to %code_count) Tj
+0 -14 Td (7. Notify captured code and count) Tj
+0 -14 Td () Tj
+0 -14 Td (This keeps the latest valid code when multiple messages arrive.) Tj
+0 -14 Td () Tj
+0 -14 Td (## 8\) Profile: BonChat trigger) Tj
+0 -14 Td (Create profile:) Tj
+0 -14 Td (- Event -> Plugin -> AutoNotification Intercept) Tj
+0 -14 Td (- App filter: BonChat) Tj
+0 -14 Td (- Linked task: GET_CODE_FROM_BONCHAT) Tj
+0 -14 Td () Tj
+0 -14 Td (## 9\) Task: SUBMIT_ONE_ACCOUNT) Tj
+0 -14 Td (This task uses %target_url and %latest_code.) Tj
+0 -14 Td () Tj
+0 -14 Td (Actions:) Tj
+0 -14 Td (1. Open %target_url in browser) Tj
+0 -14 Td (2. Wait 4 sec) Tj
+0 -14 Td (3. Tap Futures tab \(AutoInput Easy Setup\)) Tj
+0 -14 Td (4. Wait 1 sec) Tj
+0 -14 Td (5. Tap Invited me tab) Tj
+0 -14 Td (6. Wait 1 sec) Tj
+0 -14 Td (7. Tap input box \("Please enter the order code"\)) Tj
+0 -14 Td (8. Type %latest_code) Tj
+0 -14 Td (9. Wait 300 ms) Tj
+0 -14 Td (10. Tap Confirm) Tj
+0 -14 Td (11. Wait 2 sec) Tj
+0 -14 Td (12. Open tab switcher and close current tab \(memory cleanup\)) Tj
+0 -14 Td () Tj
+0 -14 Td (## 10\) Task: SUBMIT_ALL_5) Tj
+0 -14 Td (Actions:) Tj
+0 -14 Td (1. If %latest_code invalid -> notify and stop) Tj
+0 -14 Td (2. Set %target_url = URL1 -> perform SUBMIT_ONE_ACCOUNT) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 9 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 2087 >>
+stream
+BT
+/F1 11 Tf
+50 740 Td
+(3. Set %target_url = URL2 -> perform SUBMIT_ONE_ACCOUNT) Tj
+0 -14 Td (4. Set %target_url = URL3 -> perform SUBMIT_ONE_ACCOUNT) Tj
+0 -14 Td (5. Set %target_url = URL4 -> perform SUBMIT_ONE_ACCOUNT) Tj
+0 -14 Td (6. Set %target_url = URL5 -> perform SUBMIT_ONE_ACCOUNT) Tj
+0 -14 Td (7. Notify final done message) Tj
+0 -14 Td () Tj
+0 -14 Td (## 11\) Task: WINDOW_OFF_AND_SUBMIT) Tj
+0 -14 Td (Actions:) Tj
+0 -14 Td (1. Set %listen = 0) Tj
+0 -14 Td (2. Perform SUBMIT_ALL_5) Tj
+0 -14 Td () Tj
+0 -14 Td (## 12\) Time profiles) Tj
+0 -14 Td (Create 4 profiles:) Tj
+0 -14 Td (1. 11:55 -> WINDOW_ON) Tj
+0 -14 Td (2. 12:15 -> WINDOW_OFF_AND_SUBMIT) Tj
+0 -14 Td (3. 17:55 -> WINDOW_ON) Tj
+0 -14 Td (4. 18:15 -> WINDOW_OFF_AND_SUBMIT) Tj
+0 -14 Td () Tj
+0 -14 Td (This scans only your desired windows.) Tj
+0 -14 Td () Tj
+0 -14 Td (## 13\) Optional wake + lock flow) Tj
+0 -14 Td (If your phone uses swipe lock:) Tj
+0 -14 Td (- At start of master task:) Tj
+0 -14 Td (  1. Display On) Tj
+0 -14 Td (  2. AutoInput swipe up to unlock) Tj
+0 -14 Td (- At end:) Tj
+0 -14 Td (  1. System Lock / screen off action) Tj
+0 -14 Td () Tj
+0 -14 Td (If PIN/password lock is enabled, full auto unlock may be restricted by Android security.) Tj
+0 -14 Td () Tj
+0 -14 Td (## 14\) Testing checklist) Tj
+0 -14 Td (- Send test BonChat message with sample code: A1B2C3D4E) Tj
+0 -14 Td (- Confirm code capture notification appears.) Tj
+0 -14 Td (- Confirm all 5 accounts run in sequence.) Tj
+0 -14 Td (- Confirm tab closes each cycle.) Tj
+0 -14 Td (- Confirm final success notification.) Tj
+0 -14 Td () Tj
+0 -14 Td (## 15\) Reliability tips) Tj
+0 -14 Td (- Keep fixed screen orientation and browser zoom.) Tj
+0 -14 Td (- Avoid frequent app/browser updates \(UI changes break tap positions\).) Tj
+0 -14 Td (- Re-record AutoInput taps after any UI change.) Tj
+0 -14 Td (- Restart phone every 2-3 days.) Tj
+0 -14 Td () Tj
+0 -14 Td (## 16\) Safety note) Tj
+0 -14 Td (Only automate if your company/platform terms allow it.) Tj
+0 -14 Td (Do not share passwords or OTP with any third-party app or person.) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000133 00000 n 
+0000000259 00000 n 
+0000002389 00000 n 
+0000002515 00000 n 
+0000004482 00000 n 
+0000004608 00000 n 
+0000006747 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R >>
+startxref
+6817
+%%EOF
